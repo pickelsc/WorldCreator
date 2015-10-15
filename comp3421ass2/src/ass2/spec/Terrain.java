@@ -405,7 +405,7 @@ public class Terrain {
     	//Set wrap mode for texture in S direction
     	gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT); 
     	//Set wrap mode for texture in T direction
-    	gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP_TO_EDGE);
+    	gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
 		
     	// Set up VBOs for terrain
 		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
