@@ -25,8 +25,8 @@ public class Camera {
 	private static final double WALK_INTERVAL = 0.2d;
 	
 	public Camera() {
-		myTranslation = new double[] {2.5d,1d,2d};
-		myRotationY = 90;
+		myTranslation = new double[] {0d,1d,0d};
+		myRotationY = -20;
 		myRotationZ = 0;
 //		myScale = 1;
 	}

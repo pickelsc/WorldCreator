@@ -47,7 +47,8 @@ public class Terrain {
 	private int bufferIDs[];
 	private double vertices[];
 	private short indices[];
-	private float[] colours;
+	private float colours[];
+	private float texCoords[];
 	
 	private DoubleBuffer verticesBuffer;
 	private ShortBuffer indicesBuffer;
@@ -67,7 +68,11 @@ public class Terrain {
 	private MyTexture myTexture; 
 	int texUnitLoc;
     private int shaderprogram;
-	private float texCoords[] =  { 0,0,1,0,1,1,0,1 };
+//	private float texCoords[] =  { 0,0, 1,0, 1,1, 1,0, 1,0, 1,1 };
+	
+//	vertices = new double[] {0.5,1,0, -0.5,1,0, 0,-0.5,0,
+//			0,2,0, 1,2,0};
+//indices = new short[] {0,1,2, 3,1,0, 0,4,3};
 	
 	// shaders
 	private static final String VERTEX_SHADER = "src/resources/PhongVertexTex.glsl";
@@ -255,6 +260,31 @@ public class Terrain {
 	
 	private void makeTextures(GL2 gl) {
 		myTexture = new MyTexture(gl,textureGrass,"bmp",true);
+		
+		texCoords = new float[(mySize.height*mySize.width+(mySize.height-1)*(mySize.width-1))*2];
+		float cx = 0f;
+		float cy = 0f;
+		
+		for (int i=0; i<mySize.height; ++i) {
+			for (int j=0; j<mySize.width; ++j) {
+				texCoords[2*(j+i*mySize.width)] = cx%2f;
+				texCoords[2*(j+i*mySize.width)+1] = cy%2f;
+				System.out.println((cx%2f)+", "+(cy%2f));
+				++cx;
+			}
+			++cy;
+			cx = cx + mySize.width;
+		}
+		
+		int offset = mySize.height*mySize.width*2;
+		
+		// for each mid grid point
+		for (int i=0; i<mySize.height-1; ++i) {
+			for (int j=0; j<mySize.width-1; ++j) {
+				texCoords[offset+2*(j+i*(mySize.width-1))] = 0.5f;
+				texCoords[offset+2*(j+i*(mySize.width-1))+1] = 0.5f;
+			}
+		}
 	}
 	
 	/**
@@ -456,6 +486,10 @@ public class Terrain {
         makeIndices();
         makeColours();
         makeTextures(gl);
+        
+//        vertices = new double[] {0.5,1,0, -0.5,1,0, 0,-0.5,0,
+//        							0,2,0, 1,2,0};
+//        indices = new short[] {0,1,2, 3,1,0, 0,4,3};
         
         gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
         

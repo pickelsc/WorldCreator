@@ -57,7 +57,7 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		// Add an animator to call 'display' at 60fps
-		FPSAnimator animator = new FPSAnimator(60);
+		FPSAnimator animator = new FPSAnimator(1);
 		animator.add(panel);
 		animator.start();
 
@@ -89,16 +89,14 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 		
 		myCamera.setView(gl);
-		
-//		gl.glMatrixMode(GL2.GL_PROJECTION);
-//		gl.glLoadIdentity();
-//		glu.gluLookAt(2.5, 3.0, 10.0, 2.5, 2.5, 2.5, 0.0, 1.0, 0.0);
-		// apply necesary transformation
-//		gl.glScaled(1.0/getScale(), 1.0/getScale(), 1);
-//		gl.glRotated(-10, 1, 0, 0);
-//		gl.glTranslated(-5, -5, -5);
+		gl.glLoadIdentity();
 		
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
+//		GLU glu = new GLU();
+//		gl.glLoadIdentity();
+//		glu.gluLookAt(0, 3.0, 3.0, 0, 0, 0, 0.0, 1.0, 0.0);
+//		glu.gluLookAt(2.5, 3.0, 8.0, 2.5, 2.5, 2.5, 0.0, 1.0, 0.0);
+//		glu.gluLookAt(2.5, 6, 0, 2.5, 0, 2.5, 0.0, 1.0, 0.0);
 		
 		// Global Ambience
 		float globAmb[] = { GLOBAL_AMBIENCE, GLOBAL_AMBIENCE, GLOBAL_AMBIENCE, 1.0f };
@@ -119,7 +117,6 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 
 		//drawable.setGL(new DebugGL2(drawable.getGL().getGL2()));
 		GL2 gl = drawable.getGL().getGL2();
-
 
 		 // Enable depth testing.
 		gl.glEnable(GL2.GL_DEPTH_TEST);
@@ -161,11 +158,15 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
+		System.out.println("Reshaping");
+		
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
 
-		gl.glFrustum(-3.0, 3.0, -3.0, 3.0, 5.0, 100.0);
+		GLU glu = new GLU();
+		glu.gluPerspective(60, 1, 1, 20);
+		
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 
