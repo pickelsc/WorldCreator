@@ -4,6 +4,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL;
@@ -28,8 +30,8 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 
 	private Terrain myTerrain;
 	private Camera myCamera;
+	private long myTime;
 	
-	private static final float GLOBAL_AMBIENCE = 0.2f; // Global ambient white light intensity.
 	
 	public Game(Terrain terrain) {
 		super("Assignment 2");
@@ -50,14 +52,13 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 		panel.addKeyListener(this);
 		panel.setFocusable(true);
 		
-		
 		getContentPane().add(panel);
 		setSize(800, 600);
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		// Add an animator to call 'display' at 60fps
-		FPSAnimator animator = new FPSAnimator(1);
+		FPSAnimator animator = new FPSAnimator(30);
 		animator.add(panel);
 		animator.start();
 
@@ -78,32 +79,34 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 		game.run();
 	}
 
+    private void update() {
+        
+        // compute the time since the last frame
+        long time = System.currentTimeMillis();
+		double dt = (time - myTime) / 1000.0;
+        myTime = time;
+        
+        // take a copy of the ALL_OBJECTS list to avoid errors 
+        // if new objects are created in the update
+        List<GameObject> objects = new ArrayList<GameObject>(GameObject.ALL_OBJECTS);
+        
+        // update all objects
+        for (GameObject g : objects) {
+            g.update(dt);
+        }        
+    }
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
 
 		GL2 gl = drawable.getGL().getGL2();
 
-		gl.glClearColor(0.04f, 0.2f, 0.76f, 0.0f);
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
-		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
-		
 		myCamera.setView(gl);
-		gl.glLoadIdentity();
-		
-		gl.glMatrixMode(GL2.GL_MODELVIEW);
-//		GLU glu = new GLU();
-//		gl.glLoadIdentity();
-//		glu.gluLookAt(0, 3.0, 3.0, 0, 0, 0, 0.0, 1.0, 0.0);
-//		glu.gluLookAt(2.5, 3.0, 8.0, 2.5, 2.5, 2.5, 0.0, 1.0, 0.0);
-//		glu.gluLookAt(2.5, 6, 0, 2.5, 0, 2.5, 0.0, 1.0, 0.0);
-		
-		// Global Ambience
-		float globAmb[] = { GLOBAL_AMBIENCE, GLOBAL_AMBIENCE, GLOBAL_AMBIENCE, 1.0f };
-        gl.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, globAmb,0); // Global ambient light.
-		
         
 		myTerrain.drawTerrain(gl);
+		
+		update();
+		GameObject.ROOT.draw(gl);
 	}
 
 	@Override
@@ -115,6 +118,9 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 	@Override
 	public void init(GLAutoDrawable drawable) {
 
+		// init time
+		myTime = System.currentTimeMillis();
+		
 		//drawable.setGL(new DebugGL2(drawable.getGL().getGL2()));
 		GL2 gl = drawable.getGL().getGL2();
 
@@ -132,6 +138,7 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
     	gl.glCullFace(GL2.GL_BACK);
 		
     	myCamera = new Camera();
+    	MathUtil.genTrigTables();
     	
     	/*
     	// Anti Aliasing + Alpha Blending
@@ -158,7 +165,7 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
-		System.out.println("Reshaping");
+//		System.out.println("Reshaping");
 		
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glMatrixMode(GL2.GL_PROJECTION);

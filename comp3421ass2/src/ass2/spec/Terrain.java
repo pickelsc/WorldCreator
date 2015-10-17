@@ -269,7 +269,7 @@ public class Terrain {
 			for (int j=0; j<mySize.width; ++j) {
 				texCoords[2*(j+i*mySize.width)] = cx%2f;
 				texCoords[2*(j+i*mySize.width)+1] = cy%2f;
-				System.out.println((cx%2f)+", "+(cy%2f));
+//				System.out.println((cx%2f)+", "+(cy%2f));
 				++cx;
 			}
 			++cy;
