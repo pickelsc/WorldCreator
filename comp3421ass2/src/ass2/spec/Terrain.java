@@ -352,6 +352,9 @@ public class Terrain {
 	 */
 	public double altitude(double x, double z) {
 
+		x = MathUtil.clamp(x, 0, mySize.height);
+		z = MathUtil.clamp(z, 0, mySize.width);
+		
 		// the coordinates of the top left point
 		int sqrX = (int) x;
 		int sqrZ = (int) z;
@@ -359,11 +362,18 @@ public class Terrain {
 		// fraction progression
 		double u = (x % sqrX);
 		double v = (z % sqrZ);
+
+//		System.out.println(v+", "+u);
 		
 		// find the surrounding points
-		int p1[] = {sqrX+(u+v>1?0:1),sqrZ+(u+v>1?0:1)};
+		int p1[] = {sqrX+(u+v>1?1:0),sqrZ+(u+v>1?1:0)};
 		int p2[] = {sqrX+(u>v?1:0),sqrZ+(u>v?0:1)};
 		double p3[] = {sqrX+0.5,sqrZ+0.5};
+		
+		System.out.println(sqrX+", "+sqrZ
+							+" p1: ["+p1[0]+", "+p1[1]
+							+"] p2: ["+p2[0]+", "+p2[1]
+							+ "] p3: ["+p3[0]+", "+p3[1]+"]");
 		
 		// calculate the vectors
 		double f1[] = {p1[0]-x,p1[1]-z};
@@ -378,8 +388,8 @@ public class Terrain {
 		
 		// get the altitudes at each corner of the triangle to interpolate
 		double weightA = myAltitude[p1[0]][p1[1]];
-		double weightB = getAverageAlt(sqrX,sqrZ);
-		double weightC = myAltitude[p2[0]][p2[1]];
+		double weightB = myAltitude[p2[0]][p2[1]];
+		double weightC = getAverageAlt(sqrX,sqrZ); 
 		
 		return weightA*a1 + weightB*a2 + weightC*a3;
 	}
@@ -460,11 +470,11 @@ public class Terrain {
 //		gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
 		gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
 		
-		addTree(2.5, 3.5);
-		addTree(3.9,0);
-		for (Tree t : myTrees) {
-			t.drawTree(gl);
-		}
+//		addTree(2.5, 3.5);
+//		addTree(3.9,0);
+//		for (Tree t : myTrees) {
+//			t.drawTree(gl);
+//		}
 		
 	}
 	

@@ -166,9 +166,10 @@ public class GameObject {
 	 * @return
 	 */
 	public double[] getPosition() {
-		double[] t = new double[2];
+		double[] t = new double[3];
 		t[0] = myTranslation[0];
 		t[1] = myTranslation[1];
+		t[2] = myTranslation[2];
 
 		return t;
 	}
@@ -179,20 +180,21 @@ public class GameObject {
 	 * @param x
 	 * @param y
 	 */
-	public void setPosition(double x, double y) {
+	public void setPosition(double x, double z) {
 		myTranslation[0] = x;
-		myTranslation[1] = y;
+		myTranslation[1] = Game.myTerrain.altitude(x,z);
+		myTranslation[2] = z;
 	}
 
 	/**
 	 * Move the object by the specified offset in local coordinates
 	 * 
 	 * @param dx
-	 * @param dy
+	 * @param dz
 	 */
-	public void translate(double dx, double dy) {
+	public void translate(double dx, double dz) {
 		myTranslation[0] += dx;
-		myTranslation[1] += dy;
+		myTranslation[1] += dz;
 	}
 
 	/**
@@ -219,7 +221,7 @@ public class GameObject {
 	 * This does nothing in the base GameObject class. Override this in subclasses.
 	 * @param dt The amount of time since the last update (in seconds)
 	 */
-	public void update(double dt) {
+	public void update(long dt) {
 		// do nothing
 	}
 
@@ -254,9 +256,9 @@ public class GameObject {
 		gl.glPushMatrix();
 		{
 			// make my transformations
-			gl.glTranslated(this.myTranslation[0],this.myTranslation[1],0);
+			gl.glTranslated(this.myTranslation[0],this.myTranslation[1],this.myTranslation[2]);
 			gl.glRotated(this.myRotation, 0, 0, 1);
-			gl.glScaled(this.myScale,this.myScale,0);
+			gl.glScaled(this.myScale,this.myScale,this.myScale);
 
 			//draw me
 			this.drawSelf(gl);

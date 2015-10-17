@@ -28,7 +28,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
  */
 public class Game extends JFrame implements GLEventListener, KeyListener {
 
-	private Terrain myTerrain;
+	public static Terrain myTerrain;
 	private Camera myCamera;
 	private long myTime;
 	
@@ -82,9 +82,7 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
     private void update() {
         
         // compute the time since the last frame
-        long time = System.currentTimeMillis();
-		double dt = (time - myTime) / 1000.0;
-        myTime = time;
+        long myTime = System.currentTimeMillis();
         
         // take a copy of the ALL_OBJECTS list to avoid errors 
         // if new objects are created in the update
@@ -92,7 +90,7 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
         
         // update all objects
         for (GameObject g : objects) {
-            g.update(dt);
+            g.update(myTime);
         }        
     }
 
@@ -140,6 +138,7 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
     	myCamera = new Camera();
     	MathUtil.genTrigTables();
     	
+    	makeTestObjects();
     	/*
     	// Anti Aliasing + Alpha Blending
     	gl.glEnable(GL2.GL_LINE_SMOOTH);
@@ -161,6 +160,10 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 		// Create Terrain
 		myTerrain.initTerrain(gl);
 		
+	}
+	
+	private void makeTestObjects() {
+		GameObjectSphere s1 = new GameObjectSphere(GameObject.ROOT,0.5);
 	}
 
 	@Override
@@ -219,6 +222,14 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 			 
 		case KeyEvent.VK_RIGHT:
 			 myCamera.lookRight();
+			 break;
+			 
+		case KeyEvent.VK_Z:
+			 myCamera.moveUp();
+			 break;
+		
+		case KeyEvent.VK_X:
+			 myCamera.moveDown();
 			 break;
 			
 		case KeyEvent.VK_SPACE:

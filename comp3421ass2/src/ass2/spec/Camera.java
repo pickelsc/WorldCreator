@@ -7,7 +7,7 @@ import javax.media.opengl.glu.GLU;
 /**
  * The camera maintains the position an the calls glyLookAt();
  * 
- * The Z axis is 0 degrees
+ * The Z axis is the '0 degrees'
  */
 public class Camera {
 
@@ -91,37 +91,49 @@ public class Camera {
 	
 	public void WalkForward() {
 		System.out.print("Walking Forward ");
-		myTranslation[0] += WALK_INTERVAL*Math.sin(Math.toRadians(myRotation[0]));
-		myTranslation[2] += WALK_INTERVAL*Math.cos(Math.toRadians(myRotation[0]));
-		myLookAt[0] += WALK_INTERVAL*Math.sin(Math.toRadians(myRotation[0]));
-		myLookAt[2] += WALK_INTERVAL*Math.cos(Math.toRadians(myRotation[0]));
+		myTranslation[0] += WALK_INTERVAL*MathUtil.sinTable[(int)myRotation[0]];
+		myTranslation[2] += WALK_INTERVAL*MathUtil.cosTable[(int)myRotation[0]];
+		myLookAt[0] += WALK_INTERVAL*MathUtil.sinTable[(int)myRotation[0]];
+		myLookAt[2] += WALK_INTERVAL*MathUtil.cosTable[(int)myRotation[0]];
 		printStats();
 	}
 	
 	public void WalkBackward() {
 		System.out.print("Walking Backward ");
-		myTranslation[0] -= WALK_INTERVAL*Math.sin(Math.toRadians(myRotation[0]));
-		myTranslation[2] -= WALK_INTERVAL*Math.cos(Math.toRadians(myRotation[0]));
-		myLookAt[0] -= WALK_INTERVAL*Math.sin(Math.toRadians(myRotation[0]));
-		myLookAt[2] -= WALK_INTERVAL*Math.cos(Math.toRadians(myRotation[0]));
+		myTranslation[0] -= WALK_INTERVAL*MathUtil.sinTable[(int)myRotation[0]];
+		myTranslation[2] -= WALK_INTERVAL*MathUtil.cosTable[(int)myRotation[0]];
+		myLookAt[0] -= WALK_INTERVAL*MathUtil.sinTable[(int)myRotation[0]];
+		myLookAt[2] -= WALK_INTERVAL*MathUtil.cosTable[(int)myRotation[0]];
 		printStats();
 	}
 	
 	public void WalkLeft() {
 		System.out.print("Walking Left ");
-		myTranslation[0] -= WALK_INTERVAL*Math.cos(Math.toRadians(myRotation[0]));
-		myTranslation[2] -= WALK_INTERVAL*Math.sin(Math.toRadians(myRotation[0]));
-		myLookAt[0] -= WALK_INTERVAL*Math.cos(Math.toRadians(myRotation[0]));
-		myLookAt[2] -= WALK_INTERVAL*Math.sin(Math.toRadians(myRotation[0]));
+		myTranslation[0] += WALK_INTERVAL*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]+90)];
+		myTranslation[2] += WALK_INTERVAL*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]+90)];
+		myLookAt[0] += WALK_INTERVAL*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]+90)];
+		myLookAt[2] += WALK_INTERVAL*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]+90)];
 		printStats();
 	}
 	
 	public void WalkRight() {
 		System.out.print("Walking Right ");
-		myTranslation[0] += WALK_INTERVAL*Math.cos(Math.toRadians(myRotation[0]));
-		myTranslation[2] += WALK_INTERVAL*Math.sin(Math.toRadians(myRotation[0]));
-		myLookAt[0] += WALK_INTERVAL*Math.cos(Math.toRadians(myRotation[0]));
-		myLookAt[2] += WALK_INTERVAL*Math.sin(Math.toRadians(myRotation[0]));
+		myTranslation[0] += WALK_INTERVAL*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]-90)];
+		myTranslation[2] += WALK_INTERVAL*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]-90)];
+		myLookAt[0] += WALK_INTERVAL*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]-90)];
+		myLookAt[2] += WALK_INTERVAL*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]-90)];
 		printStats();
+	}
+	
+	public void moveUp() {
+		System.out.println("moving up");
+		myTranslation[1] += WALK_INTERVAL;
+		myLookAt[1] += WALK_INTERVAL;
+	}
+	
+	public void moveDown () {
+		System.out.println("moving down");
+		myTranslation[1] -= WALK_INTERVAL;
+		myLookAt[1] -= WALK_INTERVAL;
 	}
 }
