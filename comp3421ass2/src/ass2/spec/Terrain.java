@@ -68,11 +68,6 @@ public class Terrain {
 	private MyTexture myTexture; 
 	int texUnitLoc;
     private int shaderprogram;
-//	private float texCoords[] =  { 0,0, 1,0, 1,1, 1,0, 1,0, 1,1 };
-	
-//	vertices = new double[] {0.5,1,0, -0.5,1,0, 0,-0.5,0,
-//			0,2,0, 1,2,0};
-//indices = new short[] {0,1,2, 3,1,0, 0,4,3};
 	
 	// shaders
 	private static final String VERTEX_SHADER = "src/resources/PhongVertexTex.glsl";
@@ -86,19 +81,10 @@ public class Terrain {
 	 */
 	public Terrain(int width, int depth) {
 		mySize = new Dimension(width, depth);
-		myAltitude = new double[][]{
-			{0d  ,0d  ,0d  ,0d  ,0d},
-			{0d	 ,0d  ,0.5d,1d  ,0d},
-			{0d	 ,0.5d,1d  ,2d  ,0d},
-			{0d	 ,0d  ,0.5d,1d  ,0d},
-			{0d	 ,0d  ,0d  ,0d  ,0d}
-		};
+		myAltitude = new double[width][depth];
 		myTrees = new ArrayList<Tree>();
 		myRoads = new ArrayList<Road>();
 		mySunlight = new float[3];
-//		makeVertices();
-//		makeIndices();
-//		makeColours();
 	}
 	
 	public Terrain(Dimension size) {
@@ -174,6 +160,11 @@ public class Terrain {
 	 */
 	private double getAverageAlt(int a, int b) {
 //		System.out.println(myAltitude[a][b]+" "+myAltitude[a+1][b]+" "+myAltitude[a][b+1]+" "+myAltitude[a+1][b+1]);
+//		MathUtil.clamp(a, 0, mySize.width);
+//		MathUtil.clamp(b, 0, mySize.width);
+		if (a<0 || a >= mySize.height-1 || b < 0 || b >= mySize.width-1) {
+			return 1;
+		}
 		return (myAltitude[a][b]+myAltitude[a+1][b]+myAltitude[a][b+1]+myAltitude[a+1][b+1])/4;
 	}
 
@@ -352,28 +343,25 @@ public class Terrain {
 	 */
 	public double altitude(double x, double z) {
 
-		x = MathUtil.clamp(x, 0, mySize.height);
-		z = MathUtil.clamp(z, 0, mySize.width);
+		
+		if (x<0 || x > mySize.height-1 || z < 0 || z > mySize.width-1) {
+			return 1;
+		}
+		x = MathUtil.clamp(x, 0, mySize.height-1);
+		z = MathUtil.clamp(z, 0, mySize.width-1);
 		
 		// the coordinates of the top left point
 		int sqrX = (int) x;
 		int sqrZ = (int) z;
-		
-		// fraction progression
-		double u = (x % sqrX);
-		double v = (z % sqrZ);
 
-//		System.out.println(v+", "+u);
-		
+		// fraction progression
+		double u = sqrX == 0 ? x : (x % sqrX);
+		double v = sqrZ == 0 ? z : (z % sqrZ);
+
 		// find the surrounding points
-		int p1[] = {sqrX+(u+v>1?1:0),sqrZ+(u+v>1?1:0)};
-		int p2[] = {sqrX+(u>v?1:0),sqrZ+(u>v?0:1)};
-		double p3[] = {sqrX+0.5,sqrZ+0.5};
-		
-		System.out.println(sqrX+", "+sqrZ
-							+" p1: ["+p1[0]+", "+p1[1]
-							+"] p2: ["+p2[0]+", "+p2[1]
-							+ "] p3: ["+p3[0]+", "+p3[1]+"]");
+		double p1[] = {sqrX+(u+v>1?1d:0d),sqrZ+(u+v>1?1d:0d)};
+		double p2[] = {sqrX+(u>v?1d:0d),sqrZ+(u>v?0d:1d)};
+		double p3[] = {sqrX+0.5d,sqrZ+0.5d};
 		
 		// calculate the vectors
 		double f1[] = {p1[0]-x,p1[1]-z};
@@ -381,17 +369,24 @@ public class Terrain {
 		double f3[] = {p3[0]-x,p3[1]-z};
 		
 		// calculate the areas and ratios
-		double a = 0.25d;
+		double a = 0.5d;
 		double a1 = crossProduct(f2,f3)/a;
 		double a2 = crossProduct(f3,f1)/a;
 		double a3 = crossProduct(f1,f2)/a;
 		
 		// get the altitudes at each corner of the triangle to interpolate
-		double weightA = myAltitude[p1[0]][p1[1]];
-		double weightB = myAltitude[p2[0]][p2[1]];
+		double weightA = myAltitude[(int) p1[0]][(int) p1[1]];
+		double weightB = myAltitude[(int) p2[0]][(int) p2[1]];
 		double weightC = getAverageAlt(sqrX,sqrZ); 
 		
-		return weightA*a1 + weightB*a2 + weightC*a3;
+		double val = weightA*a1 + weightB*a2 + weightC*a3;
+		
+//		System.out.println(sqrX+", "+sqrZ+" "+val
+//				+" p1: ["+p1[0]+", "+p1[1]+"] : "+myAltitude[(int) p1[0]][(int) p1[1]]
+//				+" p2: ["+p2[0]+", "+p2[1]+"] : "+myAltitude[(int) p2[0]][(int) p2[1]]
+//				+" p3: ["+p3[0]+", "+p3[1]+"] : "+getAverageAlt(sqrX,sqrZ));
+		
+		return val;
 	}
 
 	private double crossProduct (double p1[], double p2[]) {
@@ -407,8 +402,8 @@ public class Terrain {
 	 */
 	public void addTree(double x, double z) {
 		double y = altitude(x, z);
-		Tree tree = new Tree(x, y, z);
-		myTrees.add(tree);
+//		Tree tree = new Tree(x, y, z);
+		//myTrees.add(tree);
 	}
 
 
@@ -470,12 +465,6 @@ public class Terrain {
 //		gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
 		gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
 		
-//		addTree(2.5, 3.5);
-//		addTree(3.9,0);
-//		for (Tree t : myTrees) {
-//			t.drawTree(gl);
-//		}
-		
 	}
 	
 	/**
@@ -501,7 +490,7 @@ public class Terrain {
 //        							0,2,0, 1,2,0};
 //        indices = new short[] {0,1,2, 3,1,0, 0,4,3};
         
-        gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
+        gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
         
 		try {
 			shaderprogram = Shader.initShaders(gl,VERTEX_SHADER,FRAGMENT_SHADER);

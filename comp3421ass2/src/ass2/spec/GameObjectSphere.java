@@ -7,9 +7,11 @@ import com.jogamp.opengl.util.gl2.GLUT;
 public class GameObjectSphere extends GameObject {
 
 	private double radius;
+	private boolean ground = true;
 	
 	public GameObjectSphere(GameObject parent) {
 		super(parent);
+		radius = 1;
 	}
 	
 	public GameObjectSphere (GameObject parent, double radius) {
@@ -20,15 +22,11 @@ public class GameObjectSphere extends GameObject {
 	@Override
 	public void drawSelf (GL2 gl) {
 		GLUT glut = new GLUT();
+		if (ground) {
+			gl.glTranslated(0, radius, 0);
+		}
 		glut.glutSolidSphere(radius, 10, 10);
 //		glut.glutSolidTeapot(1.5);
 	}
 	
-	@Override
-	public void update(long dt) {
-//		System.out.println(MathUtil.sinTable[(int) (dt%7200)/20]+", "+MathUtil.cosTable[(int) (dt%7200)/20]);
-//		this.translate(MathUtil.sinTable[(int) (dt%7200)/120], MathUtil.cosTable[(int) (dt%7200)/120]);
-		this.setPosition(2.5+MathUtil.sinTable[(int) (dt%7200)/20],2.5+MathUtil.cosTable[(int) ((dt)%7200)/20]);
-//		System.out.println(myTranslation[0]+", "+myTranslation[2]);
-	}
 }

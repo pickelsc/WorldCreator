@@ -58,7 +58,7 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		// Add an animator to call 'display' at 60fps
-		FPSAnimator animator = new FPSAnimator(30);
+		FPSAnimator animator = new FPSAnimator(20);
 		animator.add(panel);
 		animator.start();
 
@@ -73,8 +73,8 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 	 * @throws FileNotFoundException
 	 */
 	public static void main(String[] args) throws FileNotFoundException {
-		//Terrain terrain = LevelIO.load(new File(args[0]));
-		Terrain terrain =  new Terrain(5, 5);
+		Terrain terrain = LevelIO.load(new File(args[0]));
+//		Terrain terrain =  new Terrain(5, 5);
 		Game game = new Game(terrain);
 		game.run();
 	}
@@ -163,7 +163,7 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 	}
 	
 	private void makeTestObjects() {
-		GameObjectSphere s1 = new GameObjectSphere(GameObject.ROOT,0.5);
+		//GameObjectTest s1 = new GameObjectTest(GameObject.ROOT,0.5);
 	}
 
 	@Override
@@ -175,7 +175,7 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 		gl.glLoadIdentity();
 
 		GLU glu = new GLU();
-		glu.gluPerspective(60, 1, 1, 20);
+		glu.gluPerspective(60, 1, 0.01, 20);
 		
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
@@ -232,9 +232,13 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 			 myCamera.moveDown();
 			 break;
 			
-		case KeyEvent.VK_SPACE:
+		case KeyEvent.VK_C:
+			myCamera.toggleGroundMode();
 			break;
 		
+		case KeyEvent.VK_V:
+			myCamera.toggleFollowMode();
+			
 		default:
 			break;
     	}
