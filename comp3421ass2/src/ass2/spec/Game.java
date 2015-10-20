@@ -143,7 +143,7 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
     	myCamera = new Camera();
     	MathUtil.genTrigTables();
     	
-    	makeTestObjects();
+    	makeTestObjects(gl);
     	/*
     	// Anti Aliasing + Alpha Blending
     	gl.glEnable(GL2.GL_LINE_SMOOTH);
@@ -165,10 +165,23 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 		// Create Terrain
 		myTerrain.initTerrain(gl);
 		
+		List<GameObject> objects = new ArrayList<GameObject>(GameObject.ALL_OBJECTS);
+        
+        // update all objects
+        for (GameObject g : objects) {
+            g.init(gl);
+        } 
+		
 	}
 	
-	private void makeTestObjects() {
+	private void makeTestObjects(GL2 gl) {
 		GameObjectTest s1 = new GameObjectTest(GameObject.ROOT,0.5);
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);
+		gl.glPushMatrix();
+		gl.glPushAttrib(GL2.GL_LIGHTING_BIT);//saves current lighting stuff
+//		SpaceShip s2 = new SpaceShip(0.5);
+		gl.glPopAttrib();
+        gl.glPopMatrix();   
 	}
 
 	@Override

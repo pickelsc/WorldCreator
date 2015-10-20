@@ -29,7 +29,7 @@ public class GameObject {
 
 	// the local transformation
 	//myRotation should be normalised to the range (-180..180)
-	protected double myRotation;
+	protected double[] myRotation;
 	protected double myScale;
 	protected double[] myTranslation;
 
@@ -43,9 +43,9 @@ public class GameObject {
 		myParent = null;
 		myChildren = new ArrayList<GameObject>();
 
-		myRotation = 0;
-		myScale = 1;
 		myTranslation = new double[] {0,0,0};
+		myRotation = new double[] {0,0,0};
+		myScale = 1;
 
 		amShowing = true;
 
@@ -65,9 +65,9 @@ public class GameObject {
 
 		parent.myChildren.add(this);
 
-		myRotation = 0;
-		myScale = 1;
 		myTranslation = new double[] {0,0,0};
+		myRotation = new double[] {0,0,0};
+		myScale = 1;
 
 		// initially showing
 		amShowing = true;
@@ -110,27 +110,59 @@ public class GameObject {
 	 * 
 	 * @return
 	 */
-	public double getRotation() {
+	public double[] getRotation() {
 		return myRotation;
 	}
 
 	/**
 	 * Set the local rotation (in degrees)
-	 * 
 	 * @return
 	 */
-	public void setRotation(double rotation) {
-		myRotation = MathUtil.normaliseAngle(rotation);
+	public void setRotationX(double rotation) {
+		myRotation[0] = MathUtil.normaliseAngle(rotation);
+	}
+	
+	/**
+	 * Set the local rotation (in degrees)
+	 * @return
+	 */
+	public void setRotationY(double rotation) {
+		myRotation[1] = MathUtil.normaliseAngle(rotation);
+	}
+	
+	/**
+	 * Set the local rotation (in degrees)
+	 * @return
+	 */
+	public void setRotationZ(double rotation) {
+		myRotation[2] = MathUtil.normaliseAngle(rotation);
 	}
 
 	/**
 	 * Rotate the object by the given angle (in degrees)
-	 * 
 	 * @param angle
 	 */
-	public void rotate(double angle) {
-		myRotation += angle;
-		myRotation = MathUtil.normaliseAngle(myRotation);
+	public void rotateX(double angle) {
+		myRotation[0] += angle;
+		myRotation[0] = MathUtil.normaliseAngle(myRotation[0]);
+	}
+	
+	/**
+	 * Rotate the object by the given angle (in degrees)
+	 * @param angle
+	 */
+	public void rotateY(double angle) {
+		myRotation[1] += angle;
+		myRotation[1] = MathUtil.normaliseAngle(myRotation[1]);
+	}
+	
+	/**
+	 * Rotate the object by the given angle (in degrees)
+	 * @param angle
+	 */
+	public void rotateZ(double angle) {
+		myRotation[2] += angle;
+		myRotation[2] = MathUtil.normaliseAngle(myRotation[2]);
 	}
 
 	/**
@@ -216,6 +248,11 @@ public class GameObject {
 		amShowing = showing;
 	}
 
+	
+	public void init(GL2 gl) {
+		// do nothing
+	}
+	
 	/**
 	 * Update the object. This method is called once per frame. 
 	 * This does nothing in the base GameObject class. Override this in subclasses.
@@ -225,21 +262,14 @@ public class GameObject {
 		// do nothing
 	}
 
+	
 	/**
 	 * Draw the object (but not any descendants)
 	 * This does nothing in the base GameObject class. Override this in subclasses.
 	 * @param gl
 	 */
 	public void drawSelf(GL2 gl) {
-		/*
-		double [] p = this.getGlobalPosition();
-		double r = this.getGlobalRotation();
-		double s = this.getGlobalScale();
-
-		gl.glTranslated(p[0],p[1],0);
-		gl.glRotated(r, 0, 0, 1);
-		gl.glScaled(s,s,0);
-		 */
+		// do nothing
 	}
 
 	/**
@@ -257,7 +287,9 @@ public class GameObject {
 		{
 			// make my transformations
 			gl.glTranslated(this.myTranslation[0],this.myTranslation[1],this.myTranslation[2]);
-			gl.glRotated(this.myRotation, 0, 0, 1);
+			gl.glRotated(this.myRotation[0], 1, 0, 0);
+			gl.glRotated(this.myRotation[1], 0, 1, 0);
+			gl.glRotated(this.myRotation[2], 0, 0, 1);
 			gl.glScaled(this.myScale,this.myScale,this.myScale);
 
 			//draw me
@@ -270,11 +302,7 @@ public class GameObject {
 		}
 		gl.glPopMatrix();
 	}
-
-	/**
-	 * Compute the object's position in world coordinates
-	 * @return a point in world coordinates in [x,y] form
-	 */
+/*
 	public double[] getGlobalPosition() {
 
 		//get parents matrix
@@ -292,32 +320,18 @@ public class GameObject {
 
 	}
 
-	/**
-	 * Compute the object's rotation in the global coordinate frame
-	 * @return the global rotation of the object (in degrees) and 
-	 * normalized to the range (-180, 180) degrees. 
-	 */
 	public double getGlobalRotation() {
 
 		double r = this.myRotation + (this.myParent == null ? 0 : this.myParent.getGlobalRotation());
 		return MathUtil.normaliseAngle(r);
 	}
 
-	/**
-	 * Compute the object's scale in global terms
-	 * @return the global scale of the object 
-	 */
 	public double getGlobalScale() {
 
 		double s = this.myScale * (this.myParent == null ? 1 : this.myParent.getGlobalScale());
 		return s;
 	}
 
-	/**
-	 * Change the parent of a game object.
-	 * 
-	 * @param parent
-	 */
 	public void setParent(GameObject parent) {
 
 		//get current global stuff
@@ -347,5 +361,5 @@ public class GameObject {
 		this.myParent.myChildren.add(this);
 
 	}
-
+*/
 }

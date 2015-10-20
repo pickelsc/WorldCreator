@@ -47,7 +47,8 @@ public class Road extends GameObject {
 		}
 	}
 	
-	public void initRoad(GL2 gl) {
+	@Override
+	public void init(GL2 gl) {
 		roadTex = new MyTexture(gl,roadFile,"jpg",true);
 	}
 
@@ -99,7 +100,7 @@ public class Road extends GameObject {
 					gl.glTranslated(d, 0, 0);
 				}
 			}
-			gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);  
+			gl.glBindTexture(GL2.GL_TEXTURE_2D, 0); 
 		}
 		gl.glPopAttrib();
 		gl.glPopMatrix();

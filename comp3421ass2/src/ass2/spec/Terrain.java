@@ -551,13 +551,6 @@ public class Terrain {
 		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, bufferIDs[1]);
 		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, indices.length*Short.BYTES, indicesBuffer, GL2.GL_STATIC_DRAW);
         
-		for (Tree t : myTrees) {
-			t.initTree();
-		}
-		
-		for (Road r : myRoads) {
-			r.initRoad(gl);
-		}
 	}
 	
 	public void increaseTrees() {

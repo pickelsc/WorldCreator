@@ -52,28 +52,11 @@ public class Tree extends GameObject {
 	public void update (long dt) {
 		
 		float incr = 0.1f*(float) MathUtil.sinTable[(int) (dt%7200)/20];
-//		MathUtil.cosTable[(int) (dt%7200)/20];
-		
-//		float numR = r.nextFloat();
-//		float incr = 0;
-//		if (ANGLE > 20f){
-//			if (numR < 0.5){
-//				incr = -0.15f;
-//			} else {
-//				incr = -0.1f;
-//			}
-//		} else { 
-//			if (numR > 0.5f){ 
-//				incr = 0.15f;
-//			} else {
-//				incr = 0.1f;
-//			}
-//		}
 		ANGLE += incr;
-//		System.out.println(ANGLE);	
 	}
 
-	public void initTree() {
+	@Override
+	public void init(GL2 gl) {
 		r = new Random(System.currentTimeMillis());
 		String str = "X";
 
@@ -96,7 +79,7 @@ public class Tree extends GameObject {
 				tmp += "DD";
 			} else if (ch == 'X'){
 				if (num < 0.4f){
-					tmp += "D[LDXV]D[RXV]LX";
+					tmp += "D[LXV]D[RDXV]LX";
 				} else {
 					tmp += "D[RXV]D[LDXV]RX";
 				}

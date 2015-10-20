@@ -11,7 +11,7 @@ import javax.media.opengl.glu.GLU;
  */
 public class Camera {
 
-	private GameObjectSphere model;
+	private SpaceShip model;
 	
 	private double[] myTranslation;
 	private double[] myLookAt;
@@ -31,7 +31,8 @@ public class Camera {
 	private static final float GLOBAL_AMBIENCE = 0.2f; // Global ambient white light intensity.
 	
 	public Camera() {
-		this.model = new GameObjectSphere(GameObject.ROOT,0.2d);
+		model = new SpaceShip(0.2);
+		model.setRotationY(90);
 		model.show(false);
 		myTranslation = new double[] {-3d,1d,2.5d};
 		myRotation = new double[] {90d,0d,0d};
@@ -84,6 +85,7 @@ public class Camera {
 		} else {
 			myLookAt[0] -= MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0])] - MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]+LOOK_X_ANGLE)];
 			myLookAt[2] -= MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0])] - MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]+LOOK_X_ANGLE)];
+//			model.rotateY(MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0])] - MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]+LOOK_X_ANGLE)]);
 		}
 		myRotation[0] += LOOK_X_ANGLE;
 		myRotation[0] = MathUtil.normaliseAngle2(myRotation[0]);
