@@ -559,4 +559,12 @@ public class Terrain {
 			r.initRoad(gl);
 		}
 	}
+	
+	public void increaseTrees() {
+		for (Tree t : myTrees) t.increaseTree();
+	}
+	
+	public void decreaseTrees() {
+		for (Tree t : myTrees) t.decreaseTree();
+	}
 }

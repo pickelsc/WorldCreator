@@ -243,6 +243,15 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 		
 		case KeyEvent.VK_V:
 			myCamera.toggleFollowMode();
+			break;
+			
+		case KeyEvent.VK_OPEN_BRACKET:
+			myTerrain.decreaseTrees();
+			break;
+		
+		case KeyEvent.VK_CLOSE_BRACKET:
+			myTerrain.increaseTrees();
+			break;
 			
 		default:
 			break;
