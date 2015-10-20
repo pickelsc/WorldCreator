@@ -26,7 +26,7 @@ public class Camera {
 	
 	private static final double WALK_INTERVAL = 0.2d;
 	
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	
 	private static final float GLOBAL_AMBIENCE = 0.2f; // Global ambient white light intensity.
 	
@@ -91,7 +91,7 @@ public class Camera {
 	}
 	
 	public void lookRight () {
-		System.out.print("Looking Right ");
+		if (DEBUG) System.out.print("Looking Right ");
 		if (followMode == true) {
 			myTranslation[0] = myLookAt[0]-2*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]-LOOK_X_ANGLE)];
 			myTranslation[2] = myLookAt[2]-2*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]-LOOK_X_ANGLE)];

@@ -58,10 +58,15 @@ public class Terrain {
 	// lighting
 	private float diffuse = 1.0f;
 	private float specular = 1.0f;
-    private float lightAmb[];
-    private float lightDif[];
-    private float lightSpec[];
-    private float lightDir[];
+    private float light0Amb[];
+    private float light0Dif[];
+    private float light0Spec[];
+    private float light0Dir[];
+    
+    private float light1Amb[];
+    private float light1Dif[];
+    private float light1Spec[];
+    private float light1Dir[];
 	
 	// textures using shaders
 	private String textureGrass = "src/resources/grass.bmp";
@@ -424,10 +429,16 @@ public class Terrain {
 	public void drawTerrain (GL2 gl) {
 		
 		// Set up directional lighting
-        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, lightAmb, 0);
-        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, lightDif, 0);
-        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, lightSpec, 0);
-        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lightDir, 0);
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, light0Amb, 0);
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, light0Dif, 0);
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, light0Spec, 0);
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, light0Dir, 0);
+        
+        // Set up directional lighting
+        gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_AMBIENT, light1Amb, 0);
+        gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, light1Dif, 0);
+        gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, light1Spec, 0);
+        gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, light1Dir, 0);
 
         // set up texture things
         gl.glUseProgram(shaderprogram);
@@ -466,6 +477,22 @@ public class Terrain {
 //		gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
 		gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
 		
+		gl.glDisable(GL2.GL_LIGHT1);
+	}
+	
+	private void initLights (GL2 gl) {
+		
+		// Light 0 is sunlight property vectors.
+        light0Amb = new float[]{ 1f, 1f, 1f, 1f };
+        light0Dif = new float[]{ diffuse, diffuse, diffuse, 1.0f };
+        light0Spec = new float[]{ specular, specular, specular, 1.0f};
+        light0Dir = new float[] {mySunlight[0], mySunlight[1], mySunlight[2], 0};
+		
+        // Light 1 is the point light for the terrain
+        light1Amb = new float[]{ 1f, 1f, 1f, 1f };
+        light1Dif = new float[]{ 0.8f, diffuse, 0.8f, 1.0f };
+        light1Spec = new float[]{ 0.8f, specular, 0.8f, 1.0f};
+        light1Dir = new float[] {2*mySunlight[0], 2*mySunlight[1], 2*mySunlight[2], 1};
 	}
 	
 	/**
@@ -473,12 +500,8 @@ public class Terrain {
 	 */
 	public void initTerrain (GL2 gl) {
 		
-		// Light property vectors.
-        lightAmb = new float[]{ 1f, 0.0f, 0.0f, 1.0f };
-        lightDif = new float[]{ diffuse, diffuse, diffuse, 1.0f };
-        lightSpec = new float[]{ specular, specular, specular, 1.0f};
-        lightDir = new float[] {mySunlight[0], mySunlight[1], mySunlight[2], 0};
-		
+		initLights(gl);
+        
         makeVertices();
         makeIndices();
         makeColours();
@@ -536,5 +559,4 @@ public class Terrain {
 			r.initRoad(gl);
 		}
 	}
-	
 }
