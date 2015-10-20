@@ -135,6 +135,10 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
     	gl.glEnable(GL2.GL_CULL_FACE);
     	gl.glCullFace(GL2.GL_BACK);
 		
+    	// Enable texturing
+    	gl.glEnable(GL2.GL_TEXTURE_2D);
+    	
+    	// Initialise the scene
     	myCamera = new Camera();
     	MathUtil.genTrigTables();
     	

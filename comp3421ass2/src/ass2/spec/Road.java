@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.media.opengl.GL2;
 
-import com.jogamp.opengl.util.gl2.GLUT;
-
 /**
  * Class for Roads
  */
@@ -15,12 +13,13 @@ public class Road extends GameObject {
 	private List<Double> myPoints;
 	private double myWidth;
 
-	private static final int NUM_PARTS = 50;
-	private static final double FILL_LENGTH = 0.2d;
-	private static final double ROAD_THICKNESS = 0.05;
+	private static final int NUM_PARTS = 20;
+	private static final double FILL_LENGTH = 0.25d;
+	private static final double ROAD_FLAIR = 0.05;
 	
 	// texture things
-	private String textureRoad = "src/resources/road.jpg";
+	private String roadFile = "src/resources/road.jpg";
+	private MyTexture roadTex;
 
 	/** 
 	 * Create a new road starting at the specified point
@@ -47,6 +46,10 @@ public class Road extends GameObject {
 			myPoints.add(spine[i]);
 		}
 	}
+	
+	public void initRoad(GL2 gl) {
+		roadTex = new MyTexture(gl,roadFile,"jpg",true);
+	}
 
 	@Override
 	public void drawSelf(GL2 gl) {
@@ -59,6 +62,7 @@ public class Road extends GameObject {
 			double[] start = controlPoint(0);
 			gl.glTranslated(start[0], Game.myTerrain.altitude(start[0],start[1])+0.11d, start[1]);
 			
+			/*
 			// Road material vectors
 			float matAmbAndDif[] = {0.1f, 0.1f, 0.1f, 1.0f};
 			float matSpec[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -70,8 +74,13 @@ public class Road extends GameObject {
 			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, matSpec,0);
 			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SHININESS, matShine,0);
 			// gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, emm,0);
+			 */
+			gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
+			gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP_TO_EDGE); 
+			gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP_TO_EDGE);
 
-
+			gl.glBindTexture(GL2.GL_TEXTURE_2D, roadTex.getTextureId());
+			
 			for (int i=0;i<this.size();++i) {
 				double[] pc;
 				double[] pn = controlPoint(i);
@@ -106,11 +115,11 @@ public class Road extends GameObject {
 		// draw main articulation
 		gl.glBegin(GL2.GL_POLYGON);
 		{
-			gl.glVertex3d(0, 0, -myWidth/2d);
-			gl.glVertex3d(0, 0, myWidth/2d);
-			gl.glVertex3d(d+FILL_LENGTH, 0, myWidth/2d);
-			gl.glVertex3d(d+FILL_LENGTH, 0, -myWidth/2d);
-			gl.glVertex3d(0, 0, -myWidth/2d);
+			gl.glTexCoord2d(0, 0); gl.glVertex3d(0, 0, -myWidth/2d);
+			gl.glTexCoord2d(1d, 0);gl.glVertex3d(0, 0, myWidth/2d);
+			gl.glTexCoord2d(1d, d);gl.glVertex3d(d+FILL_LENGTH, 0, myWidth/2d);
+			gl.glTexCoord2d(0, d);gl.glVertex3d(d+FILL_LENGTH, 0, -myWidth/2d);
+			gl.glTexCoord2d(0, 0);gl.glVertex3d(0, 0, -myWidth/2d);
 		}
 		gl.glEnd();
 		
@@ -118,9 +127,9 @@ public class Road extends GameObject {
 		gl.glBegin(GL2.GL_POLYGON);
 		{
 			gl.glVertex3d(0, 0, -myWidth/2d);
-			gl.glVertex3d(0, -ROAD_THICKNESS, -myWidth/2d-ROAD_THICKNESS);
-			gl.glVertex3d(d+FILL_LENGTH, -ROAD_THICKNESS, -myWidth/2d-ROAD_THICKNESS);
 			gl.glVertex3d(d+FILL_LENGTH, 0, -myWidth/2d);
+			gl.glVertex3d(d+FILL_LENGTH, -ROAD_FLAIR, -myWidth/2d-ROAD_FLAIR);
+			gl.glVertex3d(0, -ROAD_FLAIR, -myWidth/2d-ROAD_FLAIR);
 			gl.glVertex3d(0, 0, -myWidth/2d);
 		}
 		gl.glEnd();
@@ -129,14 +138,12 @@ public class Road extends GameObject {
 		gl.glBegin(GL2.GL_POLYGON);
 		{
 			gl.glVertex3d(0, 0, myWidth/2d);
-			gl.glVertex3d(0, -ROAD_THICKNESS, myWidth/2d+ROAD_THICKNESS);
-			gl.glVertex3d(d+FILL_LENGTH, -ROAD_THICKNESS, myWidth/2d+ROAD_THICKNESS);
+			gl.glVertex3d(0, -ROAD_FLAIR, myWidth/2d+ROAD_FLAIR);
+			gl.glVertex3d(d+FILL_LENGTH, -ROAD_FLAIR, myWidth/2d+ROAD_FLAIR);
 			gl.glVertex3d(d+FILL_LENGTH, 0, myWidth/2d);
-			gl.glVertex3d(0, 0, myWidth/2d);;
+			gl.glVertex3d(0, 0, myWidth/2d);
 		}
 		gl.glEnd();
-
-
 
 	}
 

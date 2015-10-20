@@ -403,8 +403,8 @@ public class Terrain {
 	 */
 	public void addTree(double x, double z) {
 		double y = altitude(x, z);
-//		Tree tree = new Tree(x, y, z);
-		//myTrees.add(tree);
+		Tree tree = new Tree(x, y, z);
+		myTrees.add(tree);
 	}
 
 
@@ -438,6 +438,7 @@ public class Terrain {
     	gl.glActiveTexture(GL2.GL_TEXTURE0);
     	gl.glBindTexture(GL2.GL_TEXTURE_2D, myTexture.getTextureId());        
     	      
+    	gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
     	//Set wrap mode for texture in S direction
     	gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT); 
     	//Set wrap mode for texture in T direction
@@ -470,7 +471,6 @@ public class Terrain {
 	
 	/**
 	 * Initialiases the terrain
-	 * 
 	 */
 	public void initTerrain (GL2 gl) {
 		
@@ -478,20 +478,11 @@ public class Terrain {
         lightAmb = new float[]{ 1f, 0.0f, 0.0f, 1.0f };
         lightDif = new float[]{ diffuse, diffuse, diffuse, 1.0f };
         lightSpec = new float[]{ specular, specular, specular, 1.0f};
-//        lightDir = new float[]{ 2.5f, 5.0f, 10.0f, 0 };
-        
-//        gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE); // Enable local viewpoint
 		
         makeVertices();
         makeIndices();
         makeColours();
         makeTextures(gl);
-        
-//        vertices = new double[] {0.5,1,0, -0.5,1,0, 0,-0.5,0,
-//        							0,2,0, 1,2,0};
-//        indices = new short[] {0,1,2, 3,1,0, 0,4,3};
-        
-        gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
         
 		try {
 			shaderprogram = Shader.initShaders(gl,VERTEX_SHADER,FRAGMENT_SHADER);
@@ -537,6 +528,13 @@ public class Terrain {
 		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, bufferIDs[1]);
 		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, indices.length*Short.BYTES, indicesBuffer, GL2.GL_STATIC_DRAW);
         
+		for (Tree t : myTrees) {
+			t.initTree();
+		}
+		
+		for (Road r : myRoads) {
+			r.initRoad(gl);
+		}
 	}
 	
 }

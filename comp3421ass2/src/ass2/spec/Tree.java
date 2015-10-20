@@ -26,7 +26,6 @@ public class Tree extends GameObject {
         myTranslation[0] = x;
         myTranslation[1] = y;
         myTranslation[2] = z;
-        genTree();
     }
     
     @Override
@@ -64,7 +63,7 @@ public class Tree extends GameObject {
 		
 	}
 
-	private void genTree() {
+	public void initTree() {
 		Random r = new Random(System.currentTimeMillis());
 		str = "X";
 		
