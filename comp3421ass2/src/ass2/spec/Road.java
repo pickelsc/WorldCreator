@@ -99,6 +99,7 @@ public class Road extends GameObject {
 					gl.glTranslated(d, 0, 0);
 				}
 			}
+			gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);  
 		}
 		gl.glPopAttrib();
 		gl.glPopMatrix();

@@ -167,7 +167,7 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 	}
 	
 	private void makeTestObjects() {
-		//GameObjectTest s1 = new GameObjectTest(GameObject.ROOT,0.5);
+		GameObjectTest s1 = new GameObjectTest(GameObject.ROOT,0.5);
 	}
 
 	@Override

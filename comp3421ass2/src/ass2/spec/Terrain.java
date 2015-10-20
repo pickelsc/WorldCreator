@@ -84,7 +84,7 @@ public class Terrain {
 		myAltitude = new double[width][depth];
 		myTrees = new ArrayList<Tree>();
 		myRoads = new ArrayList<Road>();
-		mySunlight = new float[4];
+		mySunlight = new float[3];
 	}
 	
 	public Terrain(Dimension size) {
@@ -291,7 +291,6 @@ public class Terrain {
 		mySunlight[0] = dx;
 		mySunlight[1] = dy;
 		mySunlight[2] = dz;
-		mySunlight[3] = 0;
 	}
 	
 	/**
@@ -428,7 +427,7 @@ public class Terrain {
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, lightAmb, 0);
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, lightDif, 0);
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, lightSpec, 0);
-        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, mySunlight, 0);
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lightDir, 0);
 
         // set up texture things
         gl.glUseProgram(shaderprogram);
@@ -478,6 +477,7 @@ public class Terrain {
         lightAmb = new float[]{ 1f, 0.0f, 0.0f, 1.0f };
         lightDif = new float[]{ diffuse, diffuse, diffuse, 1.0f };
         lightSpec = new float[]{ specular, specular, specular, 1.0f};
+        lightDir = new float[] {mySunlight[0], mySunlight[1], mySunlight[2], 0};
 		
         makeVertices();
         makeIndices();
