@@ -26,6 +26,8 @@ public class Camera {
 	
 	private static final double WALK_INTERVAL = 0.2d;
 	
+	private static final boolean DEBUG = false;
+	
 	private static final float GLOBAL_AMBIENCE = 0.2f; // Global ambient white light intensity.
 	
 	public Camera() {
@@ -55,27 +57,27 @@ public class Camera {
 	}
 	
 	private void printStats () {
-//		System.out.println("pos: ["+myTranslation[0]+", "+myTranslation[1]+", "+myTranslation[2]+"]"
-//								+ " lookAt: ["+myLookAt[0]+", "+myLookAt[1]+", "+myLookAt[2]+"]"
-//								+ " rotation: ["+myRotation[0]+", "+myRotation[1]+", "+myRotation[2]+"]");
+		System.out.println("pos: ["+myTranslation[0]+", "+myTranslation[1]+", "+myTranslation[2]+"]"
+								+ " lookAt: ["+myLookAt[0]+", "+myLookAt[1]+", "+myLookAt[2]+"]"
+								+ " rotation: ["+myRotation[0]+", "+myRotation[1]+", "+myRotation[2]+"]");
 	}
 	
 	// Looking Functions
 	
 	public void lookUp () {
-		System.out.print("Looking Up ");
+		if (DEBUG) System.out.print("Looking Up ");
 		myRotation[2] += LOOK_Z_ANGLE;
-		printStats();
+		if (DEBUG) printStats();
 	}
 	
 	public void lookDown () {
-		System.out.print("Looking Down ");
+		if (DEBUG) System.out.print("Looking Down ");
 		myRotation[2] -= LOOK_Z_ANGLE;
-		printStats();
+		if (DEBUG) printStats();
 	}
 	
 	public void lookLeft () {
-		System.out.print("Looking Left ");
+		if (DEBUG) System.out.print("Looking Left ");
 		if (followMode == true) {
 			myTranslation[0] = myLookAt[0]+2*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]+LOOK_X_ANGLE+180)];
 			myTranslation[2] = myLookAt[2]+2*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]+LOOK_X_ANGLE+180)];
@@ -85,7 +87,7 @@ public class Camera {
 		}
 		myRotation[0] += LOOK_X_ANGLE;
 		myRotation[0] = MathUtil.normaliseAngle2(myRotation[0]);
-		printStats();
+		if (DEBUG) printStats();
 	}
 	
 	public void lookRight () {
@@ -99,53 +101,53 @@ public class Camera {
 		}
 		myRotation[0] -= LOOK_X_ANGLE;
 		myRotation[0] = MathUtil.normaliseAngle2(myRotation[0]);
-		printStats();
+		if (DEBUG) printStats();
 	}
 
 	// Walking Functions
 	
 	public void WalkForward() {
-		System.out.print("Walking Forward ");
+		if (DEBUG) System.out.print("Walking Forward ");
 		myTranslation[0] += WALK_INTERVAL*MathUtil.sinTable[(int)myRotation[0]];
 		myTranslation[2] += WALK_INTERVAL*MathUtil.cosTable[(int)myRotation[0]];
 		myLookAt[0] += WALK_INTERVAL*MathUtil.sinTable[(int)myRotation[0]];
 		myLookAt[2] += WALK_INTERVAL*MathUtil.cosTable[(int)myRotation[0]];
 		if (groundMode == true)	verticalAllign();
 		if (followMode == true) updateModel();
-		printStats();
+		if (DEBUG) printStats();
 	}
 	
 	public void WalkBackward() {
-		System.out.print("Walking Backward ");
+		if (DEBUG) System.out.print("Walking Backward ");
 		myTranslation[0] -= WALK_INTERVAL*MathUtil.sinTable[(int)myRotation[0]];
 		myTranslation[2] -= WALK_INTERVAL*MathUtil.cosTable[(int)myRotation[0]];
 		myLookAt[0] -= WALK_INTERVAL*MathUtil.sinTable[(int)myRotation[0]];
 		myLookAt[2] -= WALK_INTERVAL*MathUtil.cosTable[(int)myRotation[0]];
 		if (groundMode == true)	verticalAllign();
 		if (followMode == true) updateModel();
-		printStats();
+		if (DEBUG) printStats();
 	}
 	
 	public void WalkLeft() {
-		System.out.print("Walking Left ");
+		if (DEBUG) System.out.print("Walking Left ");
 		myTranslation[0] += WALK_INTERVAL*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]+90)];
 		myTranslation[2] += WALK_INTERVAL*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]+90)];
 		myLookAt[0] += WALK_INTERVAL*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]+90)];
 		myLookAt[2] += WALK_INTERVAL*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]+90)];
 		if (groundMode == true)	verticalAllign();
 		if (followMode == true) updateModel();
-		printStats();
+		if (DEBUG) printStats();
 	}
 	
 	public void WalkRight() {
-		System.out.print("Walking Right ");
+		if (DEBUG) System.out.print("Walking Right ");
 		myTranslation[0] += WALK_INTERVAL*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]-90)];
 		myTranslation[2] += WALK_INTERVAL*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]-90)];
 		myLookAt[0] += WALK_INTERVAL*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]-90)];
 		myLookAt[2] += WALK_INTERVAL*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]-90)];
 		if (groundMode == true)	verticalAllign();
 		if (followMode == true) updateModel();
-		printStats();
+		if (DEBUG) printStats();
 	}
 	
 	private void verticalAllign () {
@@ -161,20 +163,20 @@ public class Camera {
 	
 	public void moveUp() {
 		if (groundMode != true) {
-			System.out.print("moving up ");
+			if (DEBUG) System.out.print("moving up ");
 			myTranslation[1] += WALK_INTERVAL;
 			myLookAt[1] += WALK_INTERVAL;
 		}
-		printStats();
+		if (DEBUG) printStats();
 	}
 	
 	public void moveDown () {
 		if (groundMode != true) {
-			System.out.print("moving down ");
+			if (DEBUG) System.out.print("moving down ");
 			myTranslation[1] -= WALK_INTERVAL;
 			myLookAt[1] -= WALK_INTERVAL;
 		}
-		printStats();
+		if (DEBUG) printStats();
 	}
 	
 	private void updateModel() {
@@ -183,23 +185,23 @@ public class Camera {
 	
 	public void toggleGroundMode() {
 		if (groundMode == true) {
-			System.out.print("fly mode ");
+			if (DEBUG) System.out.print("fly mode ");
 			myTranslation[1] += 1;
 			myLookAt[1] += 1;
 			groundMode = false;
 		} else if (followMode == true) {
-			System.out.print("ground mode w/follow ");
+			if (DEBUG) System.out.print("ground mode w/follow ");
 			myTranslation[1] = 3+Game.myTerrain.altitude(myTranslation[0],myTranslation[2]);
 			myLookAt[1] = 1+Game.myTerrain.altitude(myTranslation[0],myTranslation[2]);
 			groundMode = true;
 		} else {
-			System.out.print("ground mode w/o follow ");
+			if (DEBUG) System.out.print("ground mode w/o follow ");
 			double diff = myTranslation[1] - (1+Game.myTerrain.altitude(myTranslation[0],myTranslation[2]));
 			myTranslation[1] -= diff;
 			myLookAt[1] -= diff;
 			groundMode = true;
 		}
-		printStats();
+		if (DEBUG) printStats();
 	}
 	
 	public void toggleFollowMode() {
@@ -215,7 +217,7 @@ public class Camera {
 			model.show(false);
 			followMode = false;
 		} else {
-			System.out.print("follow mode ");
+			if (DEBUG) System.out.print("follow mode ");
 			myLookAt[0] = myTranslation[0];
 			myLookAt[1] = myTranslation[1];
 			myLookAt[2] = myTranslation[2];
@@ -224,7 +226,7 @@ public class Camera {
 			myTranslation[1] += 2;
 			myTranslation[2] += 2*MathUtil.cosTable[(int) (MathUtil.normaliseAngle2(180+myRotation[0]))];
 			
-			System.out.println(MathUtil.sinTable[(int) (MathUtil.normaliseAngle2(180+myRotation[0]))]);
+			if (DEBUG) System.out.println(MathUtil.sinTable[(int) (MathUtil.normaliseAngle2(180+myRotation[0]))]);
 			
 			model.setPosition(myLookAt[0], myLookAt[2]);
 			model.show(true);
