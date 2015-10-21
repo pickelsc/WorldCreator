@@ -9,13 +9,13 @@ public class GameObjectSphere extends GameObject {
 	private double radius;
 	private boolean ground = true;
 	
-	public GameObjectSphere(GameObject parent) {
-		super(parent);
+	public GameObjectSphere() {
+		super(GameObject.ROOT);
 		radius = 1;
 	}
 	
-	public GameObjectSphere (GameObject parent, double radius) {
-		super(parent);
+	public GameObjectSphere (double radius) {
+		super(GameObject.ROOT);
 		this.radius = radius;
 	}
 

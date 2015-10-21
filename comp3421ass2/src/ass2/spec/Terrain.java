@@ -39,6 +39,8 @@ public class Terrain {
 	private List<Road> myRoads;
 	private float[] mySunlight;
 	
+	
+	private double[] highest = new double[] {0,0,0};
 	//private float myVertices[];
 	//private float myIndices[];
 	
@@ -49,11 +51,13 @@ public class Terrain {
 	private short indices[];
 	private float colours[];
 	private float texCoords[];
+	private double normals[];
 	
 	private DoubleBuffer verticesBuffer;
 	private ShortBuffer indicesBuffer;
 	private FloatBuffer texBuffer;
 	private FloatBuffer colourBuffer;
+	private DoubleBuffer normalsBuffer;
 	
 	// lighting
 	private float diffuse = 1.0f;
@@ -112,6 +116,9 @@ public class Terrain {
 		return mySunlight;
 	}
 	
+	public double[] getHighest() {
+		return highest;
+	}
 
 	/**
 	 * Generates the vertices that will form the mesh for the terrain
@@ -128,7 +135,6 @@ public class Terrain {
 		//					corner points				  + 	middle points
 		vertices = new double[(mySize.height*mySize.width+(mySize.height-1)*(mySize.width-1))*3];
 		
-		int count = 0;
 		// for each point in the altitudes
 		for (int i=0; i<mySize.height; ++i) {
 			for (int j=0; j<mySize.width; ++j) {
@@ -137,6 +143,12 @@ public class Terrain {
 				vertices[3*(j+i*mySize.width)+2] = i;
 //				System.out.println("made vertices: "+(count++)+" "+(3*(j+i*mySize.width))+" ["+j+", "+myAltitude[j][i]+", "+i+"]");
 //				System.out.println(j+", "+myAltitude[j][i]+", "+i+",");
+				if (myAltitude[j][i] > highest[1]) {
+//					System.out.println("New Highest: "+j+" "+myAltitude[j][i]+" "+i);
+					highest[0] = j;
+					highest[1] = myAltitude[j][i];
+					highest[2] = i;
+				}
 			}
 		}
 		
@@ -281,6 +293,31 @@ public class Terrain {
 				texCoords[offset+2*(j+i*(mySize.width-1))+1] = 0.5f;
 			}
 		}
+	}
+	
+	private void makeNormals(GL2 gl) {
+		normals = new double[(mySize.height*mySize.width+(mySize.height-1)*(mySize.width-1))*3];
+		
+		for (int i=0; i<mySize.height; ++i) {
+			for (int j=0; j<mySize.width; ++j) {
+				normals[3*(j+i*mySize.width)] = 0;
+				normals[3*(j+i*mySize.width)+1] = 1;
+				normals[3*(j+i*mySize.width)+2] = 0;
+			}
+		}
+		
+		int offset = mySize.height*mySize.width*3;
+		
+		// for each mid grid point
+		for (int i=0; i<mySize.height-1; ++i) {
+			for (int j=0; j<mySize.width-1; ++j) {
+				normals[offset+3*(j+i*(mySize.width-1))] = 0;
+				normals[offset+3*(j+i*(mySize.width-1))+1] = 1;
+				normals[offset+3*(j+i*(mySize.width-1))+2] = 0;
+			}
+		}
+		
+//		gl.glNormal3d(0, 1d, 0);
 	}
 	
 	/**
@@ -458,11 +495,16 @@ public class Terrain {
 		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
 //		gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
 		gl.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+		gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+		
+//		System.out.println("In draw "+bufferIDs[0]);
 		
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, bufferIDs[0]);
 		gl.glVertexPointer(3,GL2.GL_DOUBLE,0,0);
 //		gl.glColorPointer(3,GL.GL_FLOAT,0,vertices.length*Double.BYTES );
 		gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, vertices.length*Double.BYTES);
+		gl.glNormalPointer(GL2.GL_DOUBLE, 0, vertices.length*Double.BYTES+texCoords.length*Float.BYTES);
+		
 		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, bufferIDs[1]);
 		
         // Draw Simple Shape using VBOS
@@ -473,7 +515,9 @@ public class Terrain {
     	gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);     
     	gl.glUseProgram(0);
         
-		gl.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+    	
+    	gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+		gl.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
 //		gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
 		gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
 		
@@ -492,7 +536,7 @@ public class Terrain {
         light1Amb = new float[]{ 1f, 1f, 1f, 1f };
         light1Dif = new float[]{ 0.8f, diffuse, 0.8f, 1.0f };
         light1Spec = new float[]{ 0.8f, specular, 0.8f, 1.0f};
-        light1Dir = new float[] {2*mySunlight[0], 2*mySunlight[1], 2*mySunlight[2], 1};
+        light1Dir = new float[] {2*mySunlight[0], 2+2*mySunlight[1], 2*mySunlight[2], 1};
 	}
 	
 	/**
@@ -506,6 +550,7 @@ public class Terrain {
         makeIndices();
         makeColours();
         makeTextures(gl);
+        makeNormals(gl);
         
 		try {
 			shaderprogram = Shader.initShaders(gl,VERTEX_SHADER,FRAGMENT_SHADER);
@@ -521,27 +566,37 @@ public class Terrain {
         indicesBuffer = Buffers.newDirectShortBuffer(indices);
         texBuffer = Buffers.newDirectFloatBuffer(texCoords);
         colourBuffer = Buffers.newDirectFloatBuffer(colours);
+        normalsBuffer = Buffers.newDirectDoubleBuffer(normals);
         
-		bufferIDs = new int[2];
-		gl.glGenBuffers(2, bufferIDs, 0);
+		bufferIDs = new int[3];
+		gl.glGenBuffers(3, bufferIDs, 0);
+		System.out.println("bufferIDS: "+bufferIDs[0]+" "+bufferIDs[1]);
 		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
 //		gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
+		gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
 		gl.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
 		
 		// make vertices buffer
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, bufferIDs[0]);
 //		gl.glBufferData(GL2.GL_ARRAY_BUFFER, vertices.length*Double.BYTES, verticesBuffer, GL2.GL_STATIC_DRAW);
-		gl.glBufferData(GL2.GL_ARRAY_BUFFER, vertices.length*Double.BYTES + texCoords.length*Float.BYTES, null, GL2.GL_STATIC_DRAW);
+//		gl.glBufferData(GL2.GL_ARRAY_BUFFER, vertices.length*Double.BYTES + texCoords.length*Float.BYTES, null, GL2.GL_STATIC_DRAW);
 //		gl.glBufferData(GL2.GL_ARRAY_BUFFER, vertices.length*Double.BYTES + colours.length*Float.BYTES, null, GL2.GL_STATIC_DRAW);
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, vertices.length*Double.BYTES + texCoords.length*Float.BYTES + normals.length*Double.BYTES, null, GL2.GL_STATIC_DRAW);
 		
 		// load vertices data
-		gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, vertices.length*Double.BYTES, verticesBuffer);
+		gl.glBufferSubData(GL2.GL_ARRAY_BUFFER, 0, vertices.length*Double.BYTES, verticesBuffer);
 		gl.glVertexPointer(3,GL2.GL_DOUBLE,0,0);
 		
 		// load vertex texture data
-		gl.glBufferSubData(GL.GL_ARRAY_BUFFER,vertices.length*Double.BYTES,texCoords.length*Float.BYTES,texBuffer);
-		gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, vertices.length*Double.BYTES);
+		gl.glBufferSubData(GL2.GL_ARRAY_BUFFER,vertices.length*Double.BYTES,texCoords.length*Float.BYTES,texBuffer);
+		gl.glTexCoordPointer(2, GL2.GL_FLOAT, 0, vertices.length*Double.BYTES);
 		
+		// load normals data
+		gl.glBufferSubData(GL2.GL_ARRAY_BUFFER,vertices.length*Double.BYTES+texCoords.length*Float.BYTES,normals.length*Double.BYTES,normalsBuffer);
+		gl.glNormalPointer(GL2.GL_DOUBLE, 0, vertices.length*Double.BYTES+texCoords.length*Float.BYTES);
+		
+		
+//		gl.glVertexAttribPointer(vPos,3,GL.GL_FLOAT, false,0, 0); 
 		/*
 		// load vertex colour data
 		gl.glBufferSubData(GL2.GL_ARRAY_BUFFER, vertices.length*Double.BYTES, colours.length*Float.BYTES, colourBuffer);

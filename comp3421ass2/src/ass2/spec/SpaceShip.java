@@ -10,7 +10,8 @@ import javax.media.opengl.glu.*;
 public class SpaceShip extends GameObject {
 
 	private final int SLICES = 32;
-	
+	private boolean hover;
+
 	private String metalFile = "src/resources/metal.jpg";
 	private MyTexture metalTex;
 
@@ -33,11 +34,12 @@ public class SpaceShip extends GameObject {
 				{7, 4, 0, 3}
 		};
 
-	public SpaceShip(double scale) {
+	public SpaceShip(double scale, boolean b) {
 		super(GameObject.ROOT);
+		this.hover = b;
 		this.setScale(scale);
 	}
-	
+
 	@Override
 	public void init (GL2 gl) {
 		metalTex = new MyTexture(gl,metalFile,"jpg",true);
@@ -55,25 +57,34 @@ public class SpaceShip extends GameObject {
 		glu.gluQuadricDrawStyle(qobj, GLU.GLU_FILL);
 		glu.gluQuadricTexture(qobj, true);
 		gl.glTranslatef(0,0,-1.5f);
+
 		gl.glPushMatrix();
-		gl.glScaled(1, 1, 4);
-		glu.gluCylinder(qobj, 0.7, 0.3, 1.0, SLICES, 5);
+		{
+			gl.glScaled(1, 1, 4);
+			glu.gluCylinder(qobj, 0.7, 0.3, 1.0, SLICES, 5);
+		}
 		gl.glPopMatrix();
+
 		gl.glPushMatrix();
-		gl.glRotatef(25, 0, 0, 1);
-		wing(gl);
-		gl.glRotatef(-50, 0, 0, 1);
-		wing(gl);
-		gl.glRotatef(-150, 0, 0, 1);
-		wing(gl);
-		gl.glRotatef(-30, 0, 0, 1);
-		wing(gl);
+		{
+			gl.glRotatef(25, 0, 0, 1);
+			wing(gl);
+			gl.glRotatef(-50, 0, 0, 1);
+			wing(gl);
+			gl.glRotatef(-150, 0, 0, 1);
+			wing(gl);
+			gl.glRotatef(-30, 0, 0, 1);
+			wing(gl);
+		}
 		gl.glPopMatrix();
+
 		gl.glPushMatrix();
-		gl.glTranslatef(0, 0, 4);
-		glu.gluCylinder(qobj, 0.3, 0, 0.4, SLICES, 5);
+		{
+			gl.glTranslatef(0, 0, 4);
+			glu.gluCylinder(qobj, 0.3, 0, 0.4, SLICES, 5);
+		}
 		gl.glPopMatrix();
-		
+
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0); 
 	} 
 
@@ -129,10 +140,12 @@ public class SpaceShip extends GameObject {
 		gl.glPopMatrix();
 		gl.glEnable(GL2.GL_CULL_FACE);
 	}
-	
+
 	@Override
 	public void update (long dt) {
-		double d = 0.03f*MathUtil.sinTable[(int) (dt%7200)/20];
-		myTranslation[1] -= d;
+		if (hover) {
+			double d = 0.005f*MathUtil.sinTable[(int) (dt%7200)/20];
+			myTranslation[1] -= d;
+		}
 	}
 }

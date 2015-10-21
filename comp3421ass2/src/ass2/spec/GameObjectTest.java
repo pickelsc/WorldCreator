@@ -2,8 +2,8 @@ package ass2.spec;
 
 public class GameObjectTest extends GameObjectSphere {
 
-	public GameObjectTest(GameObject parent, double radius) {
-		super(parent, radius);
+	public GameObjectTest(double radius) {
+		super(radius);
 	}
 
 	@Override

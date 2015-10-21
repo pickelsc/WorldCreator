@@ -19,6 +19,7 @@ public class Tree extends GameObject {
 	private float num;
 	private float lineWidth = 5f;
 	private float length = 0.05f;
+	private int delay;
 	
 	private Random r;
 	
@@ -51,13 +52,14 @@ public class Tree extends GameObject {
 	@Override
 	public void update (long dt) {
 		
-		float incr = 0.1f*(float) MathUtil.sinTable[(int) (dt%7200)/20];
+		float incr = 0.1f*(float) MathUtil.sinTable[(int) ((dt+delay)%7200)/20];
 		ANGLE += incr;
 	}
 
 	@Override
 	public void init(GL2 gl) {
 		r = new Random(System.currentTimeMillis());
+		delay = r.nextInt();
 		String str = "X";
 
 		for(int i = 0; i <= DEPTH; i++){
@@ -66,7 +68,7 @@ public class Tree extends GameObject {
 			str = expand(num, str);
 			trees.add(str);
 		}
-		currentTree = DEPTH;
+		currentTree = DEPTH-1;
 	}
 
 	String expand(float num, String str){

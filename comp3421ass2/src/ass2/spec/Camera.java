@@ -31,7 +31,7 @@ public class Camera {
 	private static final float GLOBAL_AMBIENCE = 0.2f; // Global ambient white light intensity.
 	
 	public Camera() {
-		model = new SpaceShip(0.2);
+		model = new SpaceShip(0.2, true);
 		model.setRotationY(90);
 		model.show(false);
 		myTranslation = new double[] {-3d,1d,2.5d};
@@ -111,45 +111,49 @@ public class Camera {
 	
 	public void WalkForward() {
 		if (DEBUG) System.out.print("Walking Forward ");
+		double offset = myTranslation[1] - Game.myTerrain.altitude(myTranslation[0], myTranslation[2]);
 		myTranslation[0] += WALK_INTERVAL*MathUtil.sinTable[(int)myRotation[0]];
 		myTranslation[2] += WALK_INTERVAL*MathUtil.cosTable[(int)myRotation[0]];
 		myLookAt[0] += WALK_INTERVAL*MathUtil.sinTable[(int)myRotation[0]];
 		myLookAt[2] += WALK_INTERVAL*MathUtil.cosTable[(int)myRotation[0]];
 		if (groundMode == true)	verticalAllign();
-		if (followMode == true) updateModel();
+		if (followMode == true) updateModel(offset);
 		if (DEBUG) printStats();
 	}
 	
 	public void WalkBackward() {
 		if (DEBUG) System.out.print("Walking Backward ");
+		double offset = myTranslation[1] - Game.myTerrain.altitude(myTranslation[0], myTranslation[2]);
 		myTranslation[0] -= WALK_INTERVAL*MathUtil.sinTable[(int)myRotation[0]];
 		myTranslation[2] -= WALK_INTERVAL*MathUtil.cosTable[(int)myRotation[0]];
 		myLookAt[0] -= WALK_INTERVAL*MathUtil.sinTable[(int)myRotation[0]];
 		myLookAt[2] -= WALK_INTERVAL*MathUtil.cosTable[(int)myRotation[0]];
 		if (groundMode == true)	verticalAllign();
-		if (followMode == true) updateModel();
+		if (followMode == true) updateModel(offset);
 		if (DEBUG) printStats();
 	}
 	
 	public void WalkLeft() {
 		if (DEBUG) System.out.print("Walking Left ");
+		double offset = myTranslation[1] - Game.myTerrain.altitude(myTranslation[0], myTranslation[2]);
 		myTranslation[0] += WALK_INTERVAL*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]+90)];
 		myTranslation[2] += WALK_INTERVAL*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]+90)];
 		myLookAt[0] += WALK_INTERVAL*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]+90)];
 		myLookAt[2] += WALK_INTERVAL*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]+90)];
 		if (groundMode == true)	verticalAllign();
-		if (followMode == true) updateModel();
+		if (followMode == true) updateModel(offset);
 		if (DEBUG) printStats();
 	}
 	
 	public void WalkRight() {
 		if (DEBUG) System.out.print("Walking Right ");
+		double offset = myTranslation[1] - Game.myTerrain.altitude(myTranslation[0], myTranslation[2]);
 		myTranslation[0] += WALK_INTERVAL*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]-90)];
 		myTranslation[2] += WALK_INTERVAL*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]-90)];
 		myLookAt[0] += WALK_INTERVAL*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]-90)];
 		myLookAt[2] += WALK_INTERVAL*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]-90)];
 		if (groundMode == true)	verticalAllign();
-		if (followMode == true) updateModel();
+		if (followMode == true) updateModel(offset);
 		if (DEBUG) printStats();
 	}
 	
@@ -182,7 +186,7 @@ public class Camera {
 		if (DEBUG) printStats();
 	}
 	
-	private void updateModel() {
+	private void updateModel(double offset) {
 		// hover effect
 		model.setPosition(myLookAt[0], myLookAt[2], 0.7d);
 	}
