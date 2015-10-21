@@ -152,6 +152,7 @@ public class GameObject {
 	 * @param angle
 	 */
 	public void rotateY(double angle) {
+		System.out.println("RotateY :"+angle);
 		myRotation[1] += angle;
 		myRotation[1] = MathUtil.normaliseAngle(myRotation[1]);
 	}
@@ -218,6 +219,12 @@ public class GameObject {
 		myTranslation[2] = z;
 	}
 
+	public void setPosition(double x, double z, double offset) {
+		myTranslation[0] = x;
+		myTranslation[1] = Game.myTerrain.altitude(x,z) + offset;
+		myTranslation[2] = z;
+	}
+	
 	/**
 	 * Move the object by the specified offset in local coordinates
 	 * 
@@ -287,6 +294,7 @@ public class GameObject {
 		{
 			// make my transformations
 			gl.glTranslated(this.myTranslation[0],this.myTranslation[1],this.myTranslation[2]);
+			System.out.println(myRotation[1]);
 			gl.glRotated(this.myRotation[0], 1, 0, 0);
 			gl.glRotated(this.myRotation[1], 0, 1, 0);
 			gl.glRotated(this.myRotation[2], 0, 0, 1);

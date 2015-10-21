@@ -82,10 +82,10 @@ public class Camera {
 		if (followMode == true) {
 			myTranslation[0] = myLookAt[0]+2*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]+LOOK_X_ANGLE+180)];
 			myTranslation[2] = myLookAt[2]+2*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]+LOOK_X_ANGLE+180)];
+			model.rotateY(LOOK_X_ANGLE);
 		} else {
 			myLookAt[0] -= MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0])] - MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]+LOOK_X_ANGLE)];
 			myLookAt[2] -= MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0])] - MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]+LOOK_X_ANGLE)];
-//			model.rotateY(MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0])] - MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]+LOOK_X_ANGLE)]);
 		}
 		myRotation[0] += LOOK_X_ANGLE;
 		myRotation[0] = MathUtil.normaliseAngle2(myRotation[0]);
@@ -97,6 +97,7 @@ public class Camera {
 		if (followMode == true) {
 			myTranslation[0] = myLookAt[0]-2*MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]-LOOK_X_ANGLE)];
 			myTranslation[2] = myLookAt[2]-2*MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]-LOOK_X_ANGLE)];
+			model.rotateY(-LOOK_X_ANGLE);
 		} else {
 			myLookAt[0] += MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0])] - MathUtil.sinTable[(int)MathUtil.normaliseAngle2(myRotation[0]+LOOK_X_ANGLE)];
 			myLookAt[2] += MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0])] - MathUtil.cosTable[(int)MathUtil.normaliseAngle2(myRotation[0]+LOOK_X_ANGLE)];
@@ -182,7 +183,8 @@ public class Camera {
 	}
 	
 	private void updateModel() {
-		model.setPosition(myLookAt[0], myLookAt[2]);
+		// hover effect
+		model.setPosition(myLookAt[0], myLookAt[2], 0.7d);
 	}
 	
 	public void toggleGroundMode() {
@@ -224,7 +226,6 @@ public class Camera {
 			myLookAt[1] = myTranslation[1];
 			myLookAt[2] = myTranslation[2];
 			myTranslation[0] += 2*MathUtil.sinTable[(int) (MathUtil.normaliseAngle2(180+myRotation[0]))];
-//			myTranslation[1] += 2*MathUtil.cosTable[(int) (180+myRotation[1])];
 			myTranslation[1] += 2;
 			myTranslation[2] += 2*MathUtil.cosTable[(int) (MathUtil.normaliseAngle2(180+myRotation[0]))];
 			

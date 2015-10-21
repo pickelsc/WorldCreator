@@ -129,4 +129,10 @@ public class SpaceShip extends GameObject {
 		gl.glPopMatrix();
 		gl.glEnable(GL2.GL_CULL_FACE);
 	}
+	
+	@Override
+	public void update (long dt) {
+		double d = 0.03f*MathUtil.sinTable[(int) (dt%7200)/20];
+		myTranslation[1] -= d;
+	}
 }
