@@ -29,7 +29,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 public class Game extends JFrame implements GLEventListener, KeyListener {
 
 	public static Terrain myTerrain;
-	private Camera myCamera;
+	public static Camera myCamera;
 	private long myTime;
 
 
@@ -165,7 +165,7 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 		// Create Terrain
 		myTerrain.initTerrain(gl);
 
-		makeTestObjects(gl);
+		makeSceneObjects(gl);
 
 		List<GameObject> objects = new ArrayList<GameObject>(GameObject.ALL_OBJECTS);
 
@@ -176,16 +176,16 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 
 	}
 
-	private void makeTestObjects(GL2 gl) {
+	private void makeSceneObjects(GL2 gl) {
 		GameObjectTest s1 = new GameObjectTest(0.5d);
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);
 		gl.glPushMatrix();
 		gl.glPushAttrib(GL2.GL_LIGHTING_BIT);
 		{
 //			GameObjectSphere s2 = new GameObjectSphere(0.5);
-			SpaceShip s2 = new SpaceShip(0.5, false);
+			SpaceShipBlaster s2 = new SpaceShipBlaster(0.3);
 			s2.rotateX(-90);
-			s2.setPosition(myTerrain.getHighest()[0]+0.5, myTerrain.getHighest()[2]+0.5, 1);
+			s2.setPosition(myTerrain.getHighest()[0]+0.5, myTerrain.getHighest()[2]+0.5, 0.5);
 			
 		}
 		gl.glPopAttrib();
@@ -194,7 +194,6 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
-		//		System.out.println("Reshaping");
 
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glMatrixMode(GL2.GL_PROJECTION);

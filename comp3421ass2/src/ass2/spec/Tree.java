@@ -138,11 +138,13 @@ public class Tree extends GameObject {
 		gl.glRotatef(ANGLE*4, 0, 1, 0);
 		gl.glRotatef(ANGLE, 0, 0, 1);
 	}
+	
 	void rotR(GL2 gl){
 		gl.glRotatef(-ANGLE, 1, 0, 0);
 		gl.glRotatef(ANGLE*4, 0, 1, 0);
 		gl.glRotatef(-ANGLE, 0, 0, 1);
 	}
+	
 	void leaf(GL2 gl){
 		gl.glPushAttrib(GL2.GL_LIGHTING_BIT);//saves current lighting stuff
 		//glColor3f(0.50, 1.0, 0.0);
@@ -156,16 +158,18 @@ public class Tree extends GameObject {
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, specular,0);
 		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 20.0f);
 
-		
 		//glutSolidCube(depth+1);
 		gl.glBegin(GL2.GL_TRIANGLES);
 		{
+			gl.glPushMatrix();
+			gl.glScaled(0.5d, 0.5d, 0.5d);
 			gl.glVertex3f(0f, 0f, 0f);
 			gl.glVertex3f(0.2f, 0f, 0.3f);
 			gl.glVertex3f(0f, 1f, 0f);
 			gl.glVertex3f(0f, 0f, 0f);
 			gl.glVertex3f(-0.2f, 0f, -0.3f);
 			gl.glVertex3f(0f, 1f, 0f);
+			gl.glPopMatrix();
 		}
 		gl.glEnd();
 		gl.glPopAttrib();
@@ -175,8 +179,8 @@ public class Tree extends GameObject {
 		gl.glPushAttrib(GL2.GL_LIGHTING_BIT);
 
 		//glColor3f(0.55, 0.27, 0.07);
-		float ambient[] = new float[]{0.55f, 0.27f, 0.07f};    // ambient reflection
-		float diffuse[] = new float[]{0.55f, 0.27f, 0.07f};   // diffuse reflection
+		float ambient[] = new float[]{0.65f, 0.37f, 0.17f};    // ambient reflection
+		float diffuse[] = new float[]{0.65f, 0.37f, 0.17f};   // diffuse reflection
 		//		float specular[] = new float[]{0.55f, 0.27f, 0.07f};   // specular reflection
 
 		// material properties for the line

@@ -9,13 +9,13 @@ import javax.media.opengl.glu.GLU;
  * 
  * The Z axis is the '0 degrees'
  */
-public class Camera {
+public class Camera extends GameObject {
 
 	private SpaceShip model;
 	
-	private double[] myTranslation;
+//	private double[] myTranslation;
 	private double[] myLookAt;
-	private double[] myRotation;
+//	private double[] myRotation;
 	
 	private boolean groundMode = false;
 	private boolean followMode = false;
@@ -31,6 +31,8 @@ public class Camera {
 	private static final float GLOBAL_AMBIENCE = 0.2f; // Global ambient white light intensity.
 	
 	public Camera() {
+		super(GameObject.ROOT);
+		this.show(false);
 		model = new SpaceShip(0.2, true);
 		model.setRotationY(90);
 		model.show(false);
