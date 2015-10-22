@@ -148,15 +148,20 @@ public class Tree extends GameObject {
 	void leaf(GL2 gl){
 		gl.glPushAttrib(GL2.GL_LIGHTING_BIT);//saves current lighting stuff
 		//glColor3f(0.50, 1.0, 0.0);
-		float ambient[] = new float[]{ 0.16f, 0.3f, 0.0f };    // ambient reflection
-		float specular[] = new float[]{ 0.32f, 0.6f, 0.0f };   // specular reflection
-		float diffuse[] = new float[]{ 0.16f, 0.3f, 0.0f };   // diffuse reflection
+//		float ambient[] = new float[]{ 0.16f, 0.3f, 0.0f };    // ambient reflection
+//		float specular[] = new float[]{ 0.32f, 0.6f, 0.0f };   // specular reflection
+//		float diffuse[] = new float[]{ 0.16f, 0.3f, 0.0f };   // diffuse reflection
+		
+		float ambient[] = {0.33f, 0.22f, 0.03f, 1.0f}; 
+    	float diffuse[] = {0.78f, 0.57f, 0.11f, 1.0f}; 
+    	float specular[] = {0.99f, 0.91f, 0.81f, 1.0f}; 
+    	float shininess = 27.8f;  	
 
 		// set the material properties for leaf
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, ambient,0);
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, diffuse,0);
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, specular,0);
-		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 20.0f);
+		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, shininess);
 
 		//glutSolidCube(depth+1);
 		gl.glBegin(GL2.GL_TRIANGLES);
@@ -179,8 +184,8 @@ public class Tree extends GameObject {
 		gl.glPushAttrib(GL2.GL_LIGHTING_BIT);
 
 		//glColor3f(0.55, 0.27, 0.07);
-		float ambient[] = new float[]{0.65f, 0.37f, 0.17f};    // ambient reflection
-		float diffuse[] = new float[]{0.65f, 0.37f, 0.17f};   // diffuse reflection
+		float ambient[] = new float[]{0.15f, 0.13f, 0.17f};    // ambient reflection
+		float diffuse[] = new float[]{0.15f, 0.13f, 0.17f};   // diffuse reflection
 		//		float specular[] = new float[]{0.55f, 0.27f, 0.07f};   // specular reflection
 
 		// material properties for the line

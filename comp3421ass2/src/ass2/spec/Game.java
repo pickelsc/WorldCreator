@@ -1,5 +1,9 @@
 package ass2.spec;
 
+import static javax.media.opengl.GL.GL_BLEND;
+import static javax.media.opengl.GL.GL_ONE;
+import static javax.media.opengl.GL.GL_SRC_ALPHA;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -139,6 +143,11 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 		// Enable texturing
 		gl.glEnable(GL2.GL_TEXTURE_2D);
 
+		// Enable Blending 
+//		gl.glEnable(GL_BLEND);      
+		//Creates an additive blend, which looks spectacular on a black background
+//		gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
 		// Initialise the scene
 		myCamera = new Camera();
 		MathUtil.genTrigTables();
@@ -178,15 +187,19 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 
 	private void makeSceneObjects(GL2 gl) {
 		GameObjectTest s1 = new GameObjectTest(0.5d);
+		GameObjectDeathStar ds = new GameObjectDeathStar();
+		ds.setPosition(myTerrain.size().width+10, 2.5);
+		ds.scale(20);
+		ds.rotateX(45);
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);
 		gl.glPushMatrix();
 		gl.glPushAttrib(GL2.GL_LIGHTING_BIT);
 		{
-//			GameObjectSphere s2 = new GameObjectSphere(0.5);
+			//			GameObjectSphere s2 = new GameObjectSphere(0.5);
 			SpaceShipBlaster s2 = new SpaceShipBlaster(0.3);
 			s2.rotateX(-90);
 			s2.setPosition(myTerrain.getHighest()[0]+0.5, myTerrain.getHighest()[2]+0.5, 0.5);
-			
+
 		}
 		gl.glPopAttrib();
 		gl.glPopMatrix();   
@@ -200,7 +213,7 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 		gl.glLoadIdentity();
 
 		GLU glu = new GLU();
-		glu.gluPerspective(60, 1, 0.01, 20);
+		glu.gluPerspective(60, 1, 0.01, 90);
 
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();

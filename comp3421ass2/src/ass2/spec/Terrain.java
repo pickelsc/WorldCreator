@@ -73,8 +73,8 @@ public class Terrain {
     private float light1Dir[];
 	
 	// textures using shaders
-	private String textureGrass = "src/resources/grass.bmp";
-	private MyTexture myTexture; 
+	private String terrainImage = "src/resources/spaceship_interior.jpg";
+	private MyTexture terrainTexture; 
 	int texUnitLoc;
     private int shaderprogram;
 	
@@ -267,7 +267,7 @@ public class Terrain {
 	}
 	
 	private void makeTextures(GL2 gl) {
-		myTexture = new MyTexture(gl,textureGrass,"bmp",true);
+		terrainTexture = new MyTexture(gl,terrainImage,"jpg",true);
 		
 		texCoords = new float[(mySize.height*mySize.width+(mySize.height-1)*(mySize.width-1))*2];
 		float cx = 0f;
@@ -386,7 +386,7 @@ public class Terrain {
 	public double altitude(double x, double z) {
 
 		
-		if (x<0 || x > mySize.height-1 || z < 0 || z > mySize.width-1) {
+		if (x<0 || x > mySize.width-1 || z < 0 || z > mySize.height-1) {
 			return 1;
 		}
 		x = MathUtil.clamp(x, 0, mySize.height-1);
@@ -483,7 +483,7 @@ public class Terrain {
     	
     	// Set current texture
     	gl.glActiveTexture(GL2.GL_TEXTURE0);
-    	gl.glBindTexture(GL2.GL_TEXTURE_2D, myTexture.getTextureId());        
+    	gl.glBindTexture(GL2.GL_TEXTURE_2D, terrainTexture.getTextureId());        
     	      
     	gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
     	//Set wrap mode for texture in S direction

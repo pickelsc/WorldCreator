@@ -1,6 +1,8 @@
 package ass2.spec;
 
 import javax.media.opengl.GL2;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUquadric;
 
 import com.jogamp.opengl.util.gl2.GLUT;
 
@@ -39,7 +41,13 @@ public class GameObjectSphere extends GameObject {
 	        gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SHININESS, matShine,0);
 	        gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, emm,0);
 	        
-			glut.glutSolidSphere(radius, 20, 20);
+	        GLU glu = new GLU();
+            // the built in glut sphere does not have texture coordinates set
+            //glut.glutSolidSphere(1, 20, 20);
+            GLUquadric quadric = glu.gluNewQuadric();
+            glu.gluQuadricTexture(quadric, true);
+            glu.gluQuadricNormals(quadric, GLU.GLU_SMOOTH);
+            glu.gluSphere(quadric, 0.5d, 64, 64);
 		}
 		gl.glPopAttrib();
 	}

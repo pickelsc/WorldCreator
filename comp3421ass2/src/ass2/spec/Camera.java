@@ -42,7 +42,7 @@ public class Camera extends GameObject {
 	}
 
 	public void setView(GL2 gl) {
-		gl.glClearColor(0.04f, 0.2f, 0.76f, 0.0f);
+		gl.glClearColor(0.02f, 0.1f, 0.16f, 0.0f);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 		
