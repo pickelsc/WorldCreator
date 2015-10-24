@@ -27,10 +27,11 @@ void main (void) {
 	
 	/* normalize the light's direction. */
 	lightDir = normalize(vec3(gl_LightSource[1].position.xyz - vec3(v)));
+	//lightDir = normalize(vec3(-gl_LightSource[0].position.xyz));
     NdotL = max(dot(normal, lightDir), 0.0); 
     
     /* Compute the diffuse term */
-     diffuse = NdotL * gl_FrontMaterial.diffuse * gl_LightSource[1].diffuse; 
+    diffuse = NdotL * gl_FrontMaterial.diffuse * gl_LightSource[1].diffuse; 
 
     vec4 specular = vec4(0.0,0.0,0.0,1);
     float NdotHV;
@@ -40,7 +41,7 @@ void main (void) {
     vec3 R = normalize(reflect(-lightDir,normal)); 
     vec3 H =  normalize(lightDir+dirToView); 
    
-    /* compute the specular term if NdotL is  larger than zero */
+    /* compute the specular term if NdotL is larger than zero */
     
 	if (NdotL > 0.0) {
 		NdotR = max(dot(R,dirToView ),0.0);

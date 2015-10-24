@@ -186,10 +186,10 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 	}
 
 	private void makeSceneObjects(GL2 gl) {
-		GameObjectTest s1 = new GameObjectTest(0.5d);
-		GameObjectDeathStar ds = new GameObjectDeathStar();
+		GameObjectTest s1 = new GameObjectTest(0.5d, "glass_ball.jpg", "jpg");
+		GameObjectSphere ds = new GameObjectSphere(10, "deathstar.jpg", "jpg");
 		ds.setPosition(myTerrain.size().width+10, 2.5);
-		ds.scale(20);
+//		ds.scale(20);
 		ds.rotateX(45);
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);
 		gl.glPushMatrix();
