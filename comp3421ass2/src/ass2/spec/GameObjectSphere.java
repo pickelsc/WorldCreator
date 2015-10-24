@@ -14,12 +14,8 @@ import com.jogamp.common.nio.Buffers;
 
 public class GameObjectSphere extends GameObject {
 
-	private double radius;
 	private boolean ground = true;
 	
-	private final int MAX_STACKS= 10;
-    private final int MAX_SLICES = 20;
-    
     private double[] vertices;
     private double[] texCoords;
     private double[] normals;
@@ -41,18 +37,11 @@ public class GameObjectSphere extends GameObject {
     private float lightSpec[];
     private float lightDir[];
 
-	public GameObjectSphere(String texture, String ext) {
+	public GameObjectSphere(String texture, String ext, boolean ground) {
 		super(GameObject.ROOT);
-		radius = 1;
-		this.myImage = texture;
+		this.myImage = "src/resources/"+texture;
 		this.ext = ext;
-	}
-
-	public GameObjectSphere (double radius, String image, String ext) {
-		super(GameObject.ROOT);
-		this.radius = radius;
-		this.myImage = "src/resources/"+image;
-		this.ext = ext;
+		this.ground = ground;
 	}
 
 	@Override
@@ -140,9 +129,10 @@ public class GameObjectSphere extends GameObject {
 				normals[3*(j+i*360)+2] = z1;
 				
 				// Textures
-				texCoords[2*(j+i*360)] = (double)(i)/180d;
-				texCoords[2*(j+i*360)+1] = (double)(j)/360d;
+				texCoords[2*(j+i*360)] = (double)(j)/360d;
+				texCoords[2*(j+i*360)+1] = (double)(i)/180d;
 			}
+			
 		}
 		
 	}
@@ -156,7 +146,7 @@ public class GameObjectSphere extends GameObject {
         float[] mySunlight = Game.myTerrain.getSunlight();
         MathUtil.normalizeVector(mySunlight);
 //        lightDir = new float[] {(float) (myTranslation[0] + radius*mySunlight[0]*1.1), (float) (myTranslation[1] + radius*mySunlight[1]*1.1), (float) (myTranslation[2] + radius*mySunlight[2]*1.1), 1};
-        lightDir = new float[] {(float) myTranslation[0], (float) (myTranslation[1]+radius+2), (float) (myTranslation[2]-4)};
+        lightDir = new float[] {(float) myTranslation[0]-1, (float) (myTranslation[1]+4), (float) (myTranslation[2]+2)};
 //        lightDir = new float[] {2.5f, 5f, 2.5f};
         System.out.println("lights: "+lightDir[0]+" "+lightDir[1]+" "+lightDir[2]);
 	}
@@ -164,7 +154,7 @@ public class GameObjectSphere extends GameObject {
 	@Override
 	public void drawSelf (GL2 gl) {
 		gl.glPushAttrib(GL2.GL_LIGHTING_BIT);//saves current lighting stuff
-		if (ground) gl.glTranslated(0, radius, 0);
+		if (ground) gl.glTranslated(0, 1, 0);
 		
         // Set up directional lighting
         gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_AMBIENT, lightAmb, 0);

@@ -51,6 +51,8 @@ public class SpaceShip extends GameObject {
 		gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, metalTex.getTextureId());
 
+		gl.glUseProgram(Game.myTerrain.shaderprogram);
+    	gl.glUniform1i(Game.myTerrain.texUnitLoc , 0);
 
 		GLU glu = new GLU();
 		GLUquadric qobj = glu.gluNewQuadric();
@@ -85,6 +87,7 @@ public class SpaceShip extends GameObject {
 		}
 		gl.glPopMatrix();
 
+		gl.glUseProgram(0);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0); 
 	} 
 

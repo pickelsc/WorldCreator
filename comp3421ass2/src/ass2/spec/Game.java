@@ -186,20 +186,23 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 	}
 
 	private void makeSceneObjects(GL2 gl) {
-		GameObjectTest s1 = new GameObjectTest(0.5d, "glass_ball.jpg", "jpg");
-		GameObjectSphere ds = new GameObjectSphere(10, "deathstar.jpg", "jpg");
-		ds.setPosition(myTerrain.size().width+10, 2.5);
-//		ds.scale(20);
-		ds.rotateX(45);
-		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);
+		GameObjectTest s1 = new GameObjectTest("glass_ball.jpg", "jpg", true);
+		gl.glPushMatrix();
+		{
+			GameObjectSphere ds = new GameObjectSphere("deathstar.jpg", "jpg", false);
+			ds.setPosition(myTerrain.size().width+6, 7, 4);
+			ds.scale(5);
+			ds.rotateX(45);
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);
+		}
+		gl.glPopMatrix();
+	
 		gl.glPushMatrix();
 		gl.glPushAttrib(GL2.GL_LIGHTING_BIT);
 		{
-			//			GameObjectSphere s2 = new GameObjectSphere(0.5);
-			SpaceShipBlaster s2 = new SpaceShipBlaster(0.3);
+			SpaceShipBlaster s2 = new SpaceShipBlaster(0.7);
 			s2.rotateX(-90);
-			s2.setPosition(myTerrain.getHighest()[0]+0.5, myTerrain.getHighest()[2]+0.5, 0.5);
-
+			s2.setPosition(myTerrain.getHighest()[0]+0.5, myTerrain.getHighest()[2]+0.5, 1);
 		}
 		gl.glPopAttrib();
 		gl.glPopMatrix();   

@@ -175,11 +175,8 @@ public class Terrain {
 	 */
 	private double getAverageAlt(int a, int b) {
 		//		System.out.println(myAltitude[a][b]+" "+myAltitude[a+1][b]+" "+myAltitude[a][b+1]+" "+myAltitude[a+1][b+1]);
-		//		MathUtil.clamp(a, 0, mySize.width);
-		//		MathUtil.clamp(b, 0, mySize.width);
-		if (a<0 || a >= mySize.height-1 || b < 0 || b >= mySize.width-1) {
-			return 1;
-		}
+		MathUtil.clamp(a, 0, mySize.width);
+		MathUtil.clamp(b, 0, mySize.height);
 		return (myAltitude[a][b]+myAltitude[a+1][b]+myAltitude[a][b+1]+myAltitude[a+1][b+1])/4;
 	}
 
@@ -296,13 +293,13 @@ public class Terrain {
 	private void makeNormals(GL2 gl) {
 		normals = new double[(mySize.height*mySize.width+(mySize.height-1)*(mySize.width-1))*3];
 
-		double[] normal;
+		double[] n = new double[3];
 		for (int i=0; i<mySize.height; ++i) {
 			for (int j=0; j<mySize.width; ++j) {
-//				normal = normalCorner(i,j);
-				normals[3*(j+i*mySize.width)] = 0;
-				normals[3*(j+i*mySize.width)+1] = 1;
-				normals[3*(j+i*mySize.width)+2] = 0;
+				normalCorner(j,i,n);
+				normals[3*(j+i*mySize.width)] = n[0];
+				normals[3*(j+i*mySize.width)+1] = n[1];
+				normals[3*(j+i*mySize.width)+2] = n[2];
 			}
 		}
 
@@ -311,65 +308,67 @@ public class Terrain {
 		// for each mid grid point
 		for (int i=0; i<mySize.height-1; ++i) {
 			for (int j=0; j<mySize.width-1; ++j) {
-				normals[offset+3*(j+i*(mySize.width-1))] = 0;
-				normals[offset+3*(j+i*(mySize.width-1))+1] = 1;
-				normals[offset+3*(j+i*(mySize.width-1))+2] = 0;
+				normalMid(i,j,n);
+				normals[offset+3*(j+i*(mySize.width-1))] = n[0];
+				normals[offset+3*(j+i*(mySize.width-1))+1] = n[1];
+				normals[offset+3*(j+i*(mySize.width-1))+2] = n[2];
 			}
 		}
 	}
 
-	private double[] normalCorner (int x, int z) {
+	private void normalCorner (int x, int z, double[] normal) {
 
-		if (x>1 && x<mySize.width-1 && z>1 && z<mySize.height-1) {
-			double[][] vecs = new double[][] {
-				new double[3],
-				new double[3],
-				new double[3],
-				new double[3],
-				new double[3],
-				new double[3],
-				new double[3],
-				new double[3],
-			};
+		MathUtil.clamp(x, 1, mySize.width-1);
+		MathUtil.clamp(z, 1, mySize.height-1);
 
+		System.out.println(myAltitude[x][z]);
+		
+		double[] vecs1 = new double[3];
+		double[] vecs2 = new double[3];
+		double[] vecs3 = new double[3];
+		double[] vecs4 = new double[3];
 
-			double[] vecN = new double[] {0,altitude(x,z-1),-1};
-			double[] vecNE = new double[] {0.5,altitude(x+0.5,z-0.5),-0.5};
+		double[] vecN = new double[] {0, myAltitude[x][z>0?z-1:0],-1};
+		double[] vecE = new double[] {1,myAltitude[x<mySize.width-2?x+1:mySize.width-1][z],0};
+		double[] vecS = new double[] {0,myAltitude[x][z<mySize.height-2?z+1:mySize.height-1],1};
+		double[] vecW = new double[] {-1,myAltitude[x>0?x-1:0][z],0};
 
-			double[] vecE = new double[] {1,altitude(x+1,z),0};
-			double[] vecSE = new double[] {0.5,altitude(x+0.5,z+0.5),0.5};
+		MathUtil.normCrossProd(vecN, vecW, vecs1);
+		MathUtil.normCrossProd(vecW, vecS, vecs2);
+		MathUtil.normCrossProd(vecS, vecE, vecs3);
+		MathUtil.normCrossProd(vecE, vecN, vecs4);
 
-			double[] vecS = new double[] {0,altitude(x,z+1),1};
-			double[] vecSW = new double[] {-0.5,altitude(x-0.5,z+0.5),0.5};
+		normal[0] = (vecs1[0]+vecs2[0]+vecs3[0]+vecs4[0])/4d;
+		normal[1] = (vecs1[1]+vecs2[1]+vecs3[1]+vecs4[1])/4d;
+		normal[2] = (vecs1[2]+vecs2[2]+vecs3[2]+vecs4[2])/4d;
 
-			double[] vecW = new double[] {-1,altitude(x-1,z),0};
-			double[] vecNW = new double[] {-0.5,altitude(x-0.5,z-0.5),-0.5};
+		System.out.println("normal: "+normal[0]+" "+normal[1]+" "+normal[2]);
+	}
+	
+	private void normalMid (int x, int z, double[] normal) {
 
+		// the coordinates of the top left point
+		int sqrX = (int) x;
+		int sqrZ = (int) z;
 
-			MathUtil.normCrossProd(vecN, vecNE, vecs[0]);
-			MathUtil.normCrossProd(vecNE, vecE, vecs[1]);
+		double[] vecs1 = new double[3];
+		double[] vecs2 = new double[3];
+		double[] vecs3 = new double[3];
+		double[] vecs4 = new double[3];
 
-			MathUtil.normCrossProd(vecE, vecSE, vecs[2]);
-			MathUtil.normCrossProd(vecSE, vecS, vecs[3]);
+		double[] vecNW = new double[] {-0.5, myAltitude[sqrX][sqrZ]-altitude(sqrX+0.5,sqrZ+0.5),-0.5};
+		double[] vecNE = new double[] {0.5,myAltitude[sqrX+1][sqrZ]-altitude(sqrX+0.5,sqrZ+0.5),-0.5};
+		double[] vecSW = new double[] {-0.5,myAltitude[sqrX][sqrZ+1]-altitude(sqrX+0.5,sqrZ+0.5),0.5};
+		double[] vecSE = new double[] {0.5,myAltitude[sqrX+1][sqrZ+1]-altitude(sqrX+0.5,sqrZ+0.5),0.5};
 
-			MathUtil.normCrossProd(vecS, vecSW, vecs[4]);
-			MathUtil.normCrossProd(vecSW, vecW, vecs[5]);
+		MathUtil.normCrossProd(vecNW, vecSW, vecs1);
+		MathUtil.normCrossProd(vecSW, vecSE, vecs2);
+		MathUtil.normCrossProd(vecSE, vecNW, vecs3);
+		MathUtil.normCrossProd(vecNE, vecNW, vecs4);
 
-			MathUtil.normCrossProd(vecW, vecNW, vecs[6]);
-			MathUtil.normCrossProd(vecNW, vecN, vecs[7]);
-
-			double[] normal = new double[3];
-
-			normal[0] = (vecs[0][0]+vecs[1][0]+vecs[2][0]+vecs[3][0]+vecs[4][0]+vecs[5][0]+vecs[6][0]+vecs[7][0])/8d;
-			normal[1] = (vecs[0][1]+vecs[1][1]+vecs[2][1]+vecs[3][1]+vecs[4][1]+vecs[5][1]+vecs[6][1]+vecs[7][1])/8d;
-			normal[2] = (vecs[0][2]+vecs[1][2]+vecs[2][2]+vecs[3][2]+vecs[4][2]+vecs[5][2]+vecs[6][2]+vecs[7][2])/8d;
-
-
-			System.out.println("normal: "+normal[0]+" "+normal[1]+" "+normal[2]);
-			return normal;
-		} else {
-			return new double[] {0,1,0}; 
-		}
+		normal[0] = (vecs1[0]+vecs2[0]+vecs3[0]+vecs4[0])/4d;
+		normal[1] = (vecs1[1]+vecs2[1]+vecs3[1]+vecs4[1])/4d;
+		normal[2] = (vecs1[2]+vecs2[2]+vecs3[2]+vecs4[2])/4d;
 	}
 
 	/**
@@ -441,8 +440,8 @@ public class Terrain {
 		if (x<0 || x > mySize.width-1 || z < 0 || z > mySize.height-1) {
 			return 1;
 		}
-		x = MathUtil.clamp(x, 0, mySize.height-1);
-		z = MathUtil.clamp(z, 0, mySize.width-1);
+		x = MathUtil.clamp(x, 0, mySize.width-1);
+		z = MathUtil.clamp(z, 0, mySize.height-1);
 
 		// the coordinates of the top left point
 		int sqrX = (int) x;
